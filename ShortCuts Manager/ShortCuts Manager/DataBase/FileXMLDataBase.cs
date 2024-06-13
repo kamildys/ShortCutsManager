@@ -65,6 +65,26 @@ namespace ShortCuts_Manager.DataBase
             SaveData();
         }
 
+        public void AddToGroup(GroupShortCutsInformation group, SingleShortCutInformation item)
+        {
+            if (!group.ShortCuts.Any(x => x.Id == item.Id))
+            {
+                group.ShortCuts.Add(item);
+            }
+
+            SaveData();
+        }
+
+        public void RemoveFromGroup(GroupShortCutsInformation group, SingleShortCutInformation item)
+        {
+            if (group.ShortCuts.Any(x => x.Id == item.Id))
+            {
+                group.ShortCuts.Remove(item);
+            }
+
+            SaveData();
+        }
+
         private void SaveData()
         {
             string json = JsonConvert.SerializeObject(

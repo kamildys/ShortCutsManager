@@ -17,5 +17,9 @@ namespace ShortCuts_Manager.Interfaces
 
         void AddGroup(GroupShortCutsInformation item);
         void RemoveGroup(GroupShortCutsInformation item);
+
+        void AddToGroup(GroupShortCutsInformation group, SingleShortCutInformation item);
+
+        void RemoveFromGroup(GroupShortCutsInformation group, SingleShortCutInformation item);
     }
 }

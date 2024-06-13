@@ -26,7 +26,7 @@ namespace ShortCuts_Manager
         }
 
         public ObservableCollection<GroupShortCutsInformation> GroupShortCutsInformation { get; set; } = new ObservableCollection<GroupShortCutsInformation>();
-        public GroupShortCutsInformation SelectedGroupShortCutsInformation { get; set; }
+        public GroupShortCutsInformation? SelectedGroupShortCutsInformation { get; set; }
 
         public MainWindowViewModel(IUrlOpen urlOpen, IFileOpen fileOpen, IDataBase dataBase)
         {
@@ -39,6 +39,7 @@ namespace ShortCuts_Manager
         }
 
         #region Commands
+
         #region Run
         private ICommand _runCommand;
         public ICommand RunCommand
@@ -70,6 +71,7 @@ namespace ShortCuts_Manager
                 );
         }
         #endregion Run
+
         #region AddGroup
         private ICommand _addGroupCommand;
         public ICommand AddGroupCommand
@@ -105,6 +107,7 @@ namespace ShortCuts_Manager
             if(GroupShortCutsInformation.Any(x => x.Name == enteredText))
             {
                 MessageBox.Show("Group with this name already exists!", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             var dataRow = new GroupShortCutsInformation
@@ -117,6 +120,7 @@ namespace ShortCuts_Manager
             dataBase.AddGroup(dataRow);
         }
         #endregion AddGroup
+
         #region AddSingle
         private ICommand _addSingleCommand;
         public ICommand AddSingleCommand
@@ -154,6 +158,7 @@ namespace ShortCuts_Manager
             }
         }
         #endregion AddSingle
+
         #region DeleteSingle
         private ICommand _deleteSingleCommand;
         public ICommand DeleteSingleCommand
@@ -180,6 +185,100 @@ namespace ShortCuts_Manager
             }
         }
         #endregion DeleteSingle
+
+        #region DeleteGroup
+        private ICommand _deleteGroupCommand;
+        public ICommand DeleteGroupCommand
+        {
+            get
+            {
+                return _deleteGroupCommand ?? (_deleteGroupCommand = new CommandHandler(() => DeleteGroup(), () => CanDeleteGroup));
+            }
+        }
+        public bool CanDeleteGroup
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public void DeleteGroup()
+        {
+            dataBase.RemoveGroup(SelectedGroupShortCutsInformation);
+            GroupShortCutsInformation.Remove(SelectedGroupShortCutsInformation);
+        }
+        #endregion DeleteGroup
+
+        #region AssignToGroup
+        private ICommand _assignToGroupCommand;
+        public ICommand AssignToGroupCommand
+        {
+            get
+            {
+                return _assignToGroupCommand ?? (_assignToGroupCommand = new CommandHandler(() => AssignToGroup(), () => CanAssignToGroup));
+            }
+        }
+        public bool CanAssignToGroup
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public void AssignToGroup()
+        {
+            ComboBoxDialog assignToGroupForm = new ComboBoxDialog("Select group", GroupShortCutsInformation, "Name");
+            if (assignToGroupForm.ShowDialog() == true)
+            {
+                var pickedGroup = assignToGroupForm.ResultItem as GroupShortCutsInformation;
+
+                if(pickedGroup is null) return;
+
+                foreach (var newItem in SelectedSingleShortCutInformation)
+                {
+                    if (!pickedGroup.ShortCuts.Any(existingItem => existingItem.Id == newItem.Id))
+                    {
+                        pickedGroup.ShortCuts.Add(newItem);
+                    }
+                }
+
+                foreach (var singleShortCut in SelectedSingleShortCutInformation)
+                {
+                    dataBase.AddToGroup(pickedGroup, singleShortCut);
+                }
+            }
+        }
+        #endregion AssignToGroup
+
+        #region RemoveFromGroup
+        private ICommand _removeFromGroupCommand;
+        public ICommand RemoveFromGroupCommand
+        {
+            get
+            {
+                return _removeFromGroupCommand ?? (_removeFromGroupCommand = new CommandHandler(() => RemoveFromGroup(), () => CanRemoveFromGroup));
+            }
+        }
+        public bool CanRemoveFromGroup
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public void RemoveFromGroup()
+        {
+            foreach(var ooo in SelectedGroupShortCutsInformation.ShortCuts.ToList())
+            {
+                SelectedGroupShortCutsInformation.ShortCuts.Remove(ooo);
+                dataBase.RemoveFromGroup(SelectedGroupShortCutsInformation, ooo);
+            }
+        }
+        #endregion RemoveFromGroup
+
         #endregion Commands
 
         public void OpenLinks(string[] urls, string[] paths)

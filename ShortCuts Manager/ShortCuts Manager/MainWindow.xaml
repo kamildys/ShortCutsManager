@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:ShortCuts_Manager.Converters"
         xmlns:local="clr-namespace:ShortCuts_Manager"
         mc:Ignorable="d"
         Title="ShortCuts Manager"
@@ -13,6 +14,11 @@
         WindowStartupLocation="CenterScreen"
         >
     <Window.Resources>
+        <!--  Converters - BEGIN  -->
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
+        <!--  Converters - END  -->
+
         <!--  Icons - BEGIN  -->
         <DrawingImage x:Key="WinIcon">
             <DrawingImage.Drawing>
@@ -127,46 +133,159 @@
             </Button>
         </Grid>
 
-        <Button x:Name="Add"
-                Grid.Row="1"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Panel.ZIndex="1"
-                BorderThickness="0"
-                Content="    +    "
-                Margin="5,10,5,0"
-                >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Style.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="7,7,0,0" />
-                        </Style>
-                    </Style.Resources>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="0">
-                            <Setter Property="Command" Value="{Binding AddSingleCommand}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="1">
-                            <Setter Property="Command" Value="{Binding AddGroupCommand}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    Panel.ZIndex="1"
+                    Orientation="Horizontal"
+                    >
+            <Button x:Name="Add"
+                    Width="40"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderThickness="0"
+                    Content="+"
+                    Margin="5,10,5,0"
+                    ToolTip="Add (Single/Group)"
+                    >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7,7,0,0" />
+                            </Style>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="0">
+                                <Setter Property="Command" Value="{Binding AddSingleCommand}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="1">
+                                <Setter Property="Command" Value="{Binding AddGroupCommand}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button x:Name="Delete"
+                    Width="40"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderThickness="0"
+                    Content="-"
+                    Margin="5,10,5,0"
+                    ToolTip="Delete (Single/Group)"
+                    >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7,7,0,0" />
+                            </Style>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="0">
+                                <Setter Property="Command" Value="{Binding DeleteSingleCommand}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="1">
+                                <Setter Property="Command" Value="{Binding DeleteGroupCommand}" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="0" />
+                                    <Condition Binding="{Binding ElementName=SingleShortCutInformationList, Path=SelectedItems.Count}" Value="0" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="1" />
+                                    <Condition Binding="{Binding ElementName=GroupShortCutInformationList, Path=SelectedItems.Count}" Value="0" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button x:Name="AssignToGroup"
+                    Width="40"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderThickness="0"
+                    Command="{Binding AssignToGroupCommand}"
+                    Content="☍"
+                    Margin="5,10,5,0"
+                    ToolTip="Assign to group"
+                    Visibility="{Binding ElementName=TabSingle,
+                                         Path=IsSelected,
+                                         Converter={StaticResource BoolToVisibilityConverter}}"
+                    >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7,7,0,0" />
+                            </Style>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="0" />
+                                    <Condition Binding="{Binding ElementName=SingleShortCutInformationList, Path=SelectedItems.Count}" Value="0" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button x:Name="RemoveFromGroup"
+                    Width="40"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderThickness="0"
+                    Command="{Binding RemoveFromGroupCommand}"
+                    Content="⤫"
+                    Margin="5,10,5,0"
+                    ToolTip="Remove from group"
+                    Visibility="{Binding ElementName=TabGroups,
+                                         Path=IsSelected,
+                                         Converter={StaticResource BoolToVisibilityConverter}}"
+                    >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7,7,0,0" />
+                            </Style>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=TabElement, Path=SelectedIndex}" Value="1" />
+                                    <Condition Binding="{Binding ElementName=AssignedToGroup, Path=SelectedItems.Count}" Value="0" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
 
         <TabControl Name="TabElement"
                     Grid.Row="1"
                     BorderThickness="1"
                     Margin="5"
                     >
-            <TabItem Header="Single">
+            <TabItem Name="TabSingle" Header="Single">
                 <ListBox x:Name="SingleShortCutInformationList"
                          BorderThickness="0"
                          ItemsSource="{Binding SingleShortCutInformation}"
-                         SelectionMode="Multiple"
+                         SelectionMode="Extended"
                          >
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -220,7 +339,7 @@
                     </ListBox.ItemContainerStyle>
                 </ListBox>
             </TabItem>
-            <TabItem Header="Groups">
+            <TabItem Name="TabGroups" Header="Groups">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -230,11 +349,13 @@
 
                     <ListBox x:Name="GroupShortCutInformationList"
                              Grid.Row="0"
-                             BorderThickness="0.5"
+                             BorderThickness="0"
                              ItemsSource="{Binding GroupShortCutsInformation,
                                                    UpdateSourceTrigger=PropertyChanged,
                                                    Mode=TwoWay}"
-                             SelectedItem="{Binding SelectedGroupShortCutsInformation}"
+                             SelectedItem="{Binding SelectedGroupShortCutsInformation,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    Mode=TwoWay}"
                              SelectionMode="Single"
                              >
                         <ListBox.ItemTemplate>
@@ -249,12 +370,14 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-
                     </ListBox>
                     <Label Grid.Row="1" Content="Assigned:" />
-                    <ListBox Grid.Row="2"
-                             BorderThickness="0.5"
-                             ItemsSource="{Binding SelectedGroupShortCutsInformation.ShortCuts}"
+                    <ListBox x:Name="AssignedToGroup"
+                             Grid.Row="2"
+                             BorderThickness="0"
+                             ItemsSource="{Binding SelectedGroupShortCutsInformation.ShortCuts,
+                                                   Mode=TwoWay}"
+                             SelectionMode="Extended"
                              >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -280,6 +403,11 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                     </ListBox>
                 </Grid>
             </TabItem>
@@ -307,7 +435,6 @@
                             </MultiDataTrigger.Conditions>
                             <Setter Property="IsEnabled" Value="False" />
                         </MultiDataTrigger>
-
                     </Style.Triggers>
                 </Style>
             </Button.Style>

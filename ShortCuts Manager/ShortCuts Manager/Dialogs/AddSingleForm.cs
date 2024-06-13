@@ -1,4 +1,5 @@
-﻿using ShortCuts_Manager.Helpers.Enums;
+﻿using Microsoft.Win32;
+using ShortCuts_Manager.Helpers.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +70,17 @@ namespace ShortCuts_Manager.Dialogs
                 Margin = new Thickness(10, 0, 10, 0),
                 VerticalAlignment = VerticalAlignment.Top,
                 GroupName = "PathType",
+            };
+
+            FileBTN.Checked += (s, e) => 
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    TextBoxName.Text = openFileDialog.SafeFileName;
+                    TextBoxPath.Text = openFileDialog.FileName;
+                }
             };
 
             UrlBTN = new RadioButton
