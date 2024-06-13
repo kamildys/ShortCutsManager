@@ -1,4 +1,5 @@
 ﻿using ShortCuts_Manager.Dialogs;
+using ShortCuts_Manager.ExtensionMethods;
 using ShortCuts_Manager.Helpers;
 using ShortCuts_Manager.Helpers.Enums;
 using ShortCuts_Manager.Interfaces;
@@ -34,8 +35,8 @@ namespace ShortCuts_Manager
             this.fileOpen = fileOpen;
             this.dataBase = dataBase;
 
-            SingleShortCutInformation = new ObservableCollection<SingleShortCutInformation>(dataBase.SingleShortCutInformation);
-            GroupShortCutsInformation = new ObservableCollection<GroupShortCutsInformation>(dataBase.GroupShortCutsInformation);
+            SingleShortCutInformation = new ObservableCollection<SingleShortCutInformation>(dataBase.SingleShortCutInformation.OrderBy(x => x.Name));
+            GroupShortCutsInformation = new ObservableCollection<GroupShortCutsInformation>(dataBase.GroupShortCutsInformation.OrderBy(x => x.Name));
         }
 
         #region Commands
@@ -116,7 +117,9 @@ namespace ShortCuts_Manager
                 Name = enteredText
             };
 
-            GroupShortCutsInformation.Add(dataRow);
+            //GroupShortCutsInformation.Add(dataRow);
+            GroupShortCutsInformation.AddSorted(dataRow, x => x.Name);
+
             dataBase.AddGroup(dataRow);
         }
         #endregion AddGroup
@@ -153,7 +156,9 @@ namespace ShortCuts_Manager
                     PathType = pathType
                 };
 
-                SingleShortCutInformation.Add(dataRow);
+                //SingleShortCutInformation.Add(dataRow);
+                SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
+
                 dataBase.AddSingle(dataRow);
             }
         }

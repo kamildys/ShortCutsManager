@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:converters="clr-namespace:ShortCuts_Manager.Converters"
         xmlns:local="clr-namespace:ShortCuts_Manager"
         mc:Ignorable="d"
@@ -287,6 +288,11 @@
                          ItemsSource="{Binding SingleShortCutInformation}"
                          SelectionMode="Extended"
                          >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding RunCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
@@ -358,6 +364,11 @@
                                                     Mode=TwoWay}"
                              SelectionMode="Single"
                              >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding RunCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
