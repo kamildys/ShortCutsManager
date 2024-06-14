@@ -8,6 +8,10 @@ using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using System.Windows;
 using System.Collections;
+using Label = System.Windows.Controls.Label;
+using ComboBox = System.Windows.Controls.ComboBox;
+using Button = System.Windows.Controls.Button;
+using Application = System.Windows.Application;
 
 namespace ShortCuts_Manager.Dialogs
 {
@@ -45,8 +49,6 @@ namespace ShortCuts_Manager.Dialogs
                 Width = 60,
                 Margin = new Thickness(10),
                 VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                BorderThickness = new Thickness(0),
             };
             okButton.Click += OkButton_Click;
 

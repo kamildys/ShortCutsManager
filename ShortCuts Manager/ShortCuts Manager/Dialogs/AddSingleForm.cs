@@ -7,6 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Application = System.Windows.Application;
+using Button = System.Windows.Controls.Button;
+using Label = System.Windows.Controls.Label;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using RadioButton = System.Windows.Controls.RadioButton;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace ShortCuts_Manager.Dialogs
 {
@@ -99,8 +105,6 @@ namespace ShortCuts_Manager.Dialogs
                 Width = 60,
                 Margin = new Thickness(10),
                 VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                BorderThickness = new Thickness(0),
             };
             okButton.Click += OkButton_Click;
 

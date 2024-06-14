@@ -1,6 +1,7 @@
 ﻿using ShortCuts_Manager.Interfaces;
 using System.Diagnostics;
 using System.Windows;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ShortCuts_Manager.Open
 {

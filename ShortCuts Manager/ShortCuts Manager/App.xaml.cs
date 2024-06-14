@@ -3,6 +3,7 @@ using ShortCuts_Manager.Interfaces;
 using System.Windows;
 using ShortCuts_Manager.Open;
 using ShortCuts_Manager.DataBase;
+using Application = System.Windows.Application;
 
 namespace ShortCuts_Manager
 {

@@ -6,14 +6,18 @@ using ShortCuts_Manager.Interfaces;
 using ShortCuts_Manager.Models;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ShortCuts_Manager
 {
     public class MainWindowViewModel
     {
+        //private System.Windows.Forms.NotifyIcon NotifyIcon;
+
         private IUrlOpen? urlOpen;
         private IFileOpen? fileOpen;
         private IDataBase? dataBase;
@@ -21,7 +25,8 @@ namespace ShortCuts_Manager
         public int MainTabSelectedIndex { get; set; }
 
         public ObservableCollection<SingleShortCutInformation> SingleShortCutInformation { get; set; } = new ObservableCollection<SingleShortCutInformation>();
-        public List<SingleShortCutInformation> SelectedSingleShortCutInformation {
+        public List<SingleShortCutInformation> SelectedSingleShortCutInformation
+        {
             get
             {
                 return SingleShortCutInformation.Where(x => x.IsSelected).ToList();
@@ -39,6 +44,8 @@ namespace ShortCuts_Manager
 
             SingleShortCutInformation = new ObservableCollection<SingleShortCutInformation>(dataBase.SingleShortCutInformation.OrderBy(x => x.Name));
             GroupShortCutsInformation = new ObservableCollection<GroupShortCutsInformation>(dataBase.GroupShortCutsInformation.OrderBy(x => x.Name));
+
+            InitNotifyIcon();
         }
 
         #region Commands
@@ -123,9 +130,9 @@ namespace ShortCuts_Manager
                 return;
             }
 
-            if(GroupShortCutsInformation.Any(x => x.Name == enteredText))
+            if (GroupShortCutsInformation.Any(x => x.Name == enteredText))
             {
-                MessageBox.Show("Group with this name already exists!", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Group with this name already exists!", System.Windows.Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -207,7 +214,7 @@ namespace ShortCuts_Manager
 
         public void DeleteSingle()
         {
-            foreach(var info in SelectedSingleShortCutInformation.ToList())
+            foreach (var info in SelectedSingleShortCutInformation.ToList())
             {
                 SingleShortCutInformation.Remove(info);
                 dataBase.RemoveSingle(info);
@@ -263,7 +270,7 @@ namespace ShortCuts_Manager
             {
                 var pickedGroup = assignToGroupForm.ResultItem as GroupShortCutsInformation;
 
-                if(pickedGroup is null) return;
+                if (pickedGroup is null) return;
 
                 foreach (var newItem in SelectedSingleShortCutInformation)
                 {
@@ -300,7 +307,7 @@ namespace ShortCuts_Manager
 
         public void RemoveFromGroup()
         {
-            foreach(var ooo in SelectedGroupShortCutsInformation.ShortCuts.Where(x => x.IsSelected).ToList())
+            foreach (var ooo in SelectedGroupShortCutsInformation.ShortCuts.Where(x => x.IsSelected).ToList())
             {
                 SelectedGroupShortCutsInformation.ShortCuts.Remove(ooo);
                 dataBase.RemoveFromGroup(SelectedGroupShortCutsInformation, ooo);
@@ -316,5 +323,68 @@ namespace ShortCuts_Manager
 
             fileOpen?.OpenFiles(paths: paths);
         }
+
+        #region NotifyIcon
+        public void InitNotifyIcon()
+        {
+            var NotifyIcon = new NotifyIcon()
+            {
+                Icon = new Icon("C:\\GIT\\ShortCutsManager\\ShortCuts Manager\\ShortCuts Manager\\Resources\\icon.ico"),
+                Visible = true,
+                Text = "ShortCuts Manager",
+            };
+
+            NotifyIcon.Click += NotifyIcon_Click;
+
+            ContextMenu contextMenu = new ContextMenu();
+
+            var contextMenuStrip = new ContextMenuStrip();
+
+            var singleMenuItem = new ToolStripMenuItem
+            {
+                Text = "Single"
+            };
+
+            singleMenuItem.DropDownOpening += SingleMenuItem_DropDownOpening;
+            singleMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[]{new ToolStripMenuItem(){}});
+
+            var groupsMenuItem = new ToolStripMenuItem
+            {
+                Text = "Groups"
+            };
+
+            contextMenuStrip.Items.AddRange(new ToolStripItem[]
+            {
+                singleMenuItem,
+                groupsMenuItem
+            });
+
+            NotifyIcon.ContextMenuStrip = contextMenuStrip;
+        }
+
+        private void SingleMenuItem_DropDownOpening(object? sender, EventArgs e)
+        {
+            var senderToolStripMenuItem = sender as ToolStripMenuItem;
+
+            senderToolStripMenuItem.DropDownItems.Clear();
+
+            senderToolStripMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[]
+            {
+                new ToolStripMenuItem()
+                {
+                    Text = "subItem"
+                }
+            });
+        }
+
+        private void NotifyIcon_Click(object? sender, EventArgs e)
+        {
+            if ((e as System.Windows.Forms.MouseEventArgs).Button == MouseButtons.Right) return;
+
+            System.Windows.Application.Current.MainWindow.Show();
+            System.Windows.Application.Current.MainWindow.WindowState = System.Windows.WindowState.Normal;
+            System.Windows.Application.Current.MainWindow.Activate();
+        }
+        #endregion NotifyIcon
     }
 }
