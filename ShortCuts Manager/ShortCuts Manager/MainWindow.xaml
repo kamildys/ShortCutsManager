@@ -12,8 +12,14 @@
         Width="300"
         MinHeight="400"
         MinWidth="300"
+        ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
         >
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
+
     <Window.Resources>
         <!--  Converters - BEGIN  -->
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -82,56 +88,92 @@
             </DrawingImage.Drawing>
         </DrawingImage>
         <!--  Icons - END  -->
+
+        <Style x:Key="TopBarButton" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                >
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"
+                                              />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="1" />
+                </Trigger>
+            </Style.Triggers>
+
+        </Style>
     </Window.Resources>
 
     <Grid>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <Button Grid.Column="0"
-                    BorderThickness="0"
-                    Content="Add"
-                    Margin="5"
-                    >
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Style.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="7" />
-                            </Style>
-                        </Style.Resources>
-                    </Style>
-                </Button.Style>
-            </Button>
-            <Button Grid.Column="1"
-                    BorderThickness="0"
-                    Content="Delete"
-                    Margin="5"
-                    >
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=SingleShortCutInformationList, Path=SelectedItems.Count}" Value="0">
-                                <Setter Property="IsEnabled" Value="False" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                        <Style.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="7" />
-                            </Style>
-                        </Style.Resources>
-                    </Style>
-                </Button.Style>
-            </Button>
+            <DockPanel x:Name="TopBar"
+                       Grid.Row="0"
+                       Height="20"
+                       Margin="5,5,5,0"
+                       MouseLeftButtonDown="TopBar_MouseLeftButtonDown"
+                       >
+                <Button Name="Close"
+                        Width="25"
+                        Click="Close_Click"
+                        Content="✕"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TopBarButton}"
+                        />
+                <Button Name="Maximalize"
+                        Width="25"
+                        Click="Maximalize_Click"
+                        Content="▢"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TopBarButton}"
+                        />
+                <Button Name="Minimalize"
+                        Width="25"
+                        Click="Minimalize_Click"
+                        Content="─"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TopBarButton}"
+                        />
+                <Label />
+            </DockPanel>
+
+            <Grid Grid.Row="1"
+                  HorizontalAlignment="Center"
+                  Margin="0,10,0,0"
+                  >
+                <StackPanel Orientation="Vertical">
+                    <Image Width="200" Source="/Resources/demant-logo.png" />
+                    <Label HorizontalAlignment="Right"
+                           Content="ShortCuts Manager"
+                           FontStyle="Italic"
+                           FontWeight="ExtraLight"
+                           />
+                </StackPanel>
+            </Grid>
         </Grid>
 
         <StackPanel Grid.Row="1"
@@ -217,7 +259,7 @@
                     BorderThickness="0"
                     Command="{Binding AssignToGroupCommand}"
                     Content="☍"
-                    Margin="5,10,5,0"
+                    Margin="5,10,10,0"
                     ToolTip="Assign to group"
                     Visibility="{Binding ElementName=TabSingle,
                                          Path=IsSelected,
@@ -250,7 +292,7 @@
                     BorderThickness="0"
                     Command="{Binding RemoveFromGroupCommand}"
                     Content="⤫"
-                    Margin="5,10,5,0"
+                    Margin="5,10,10,0"
                     ToolTip="Remove from group"
                     Visibility="{Binding ElementName=TabGroups,
                                          Path=IsSelected,
@@ -280,7 +322,7 @@
         <TabControl Name="TabElement"
                     Grid.Row="1"
                     BorderThickness="1"
-                    Margin="5"
+                    Margin="10,5,10,5"
                     SelectedIndex="{Binding MainTabSelectedIndex}"
                     >
             <TabItem Name="TabSingle" Header="Single">
@@ -407,7 +449,8 @@
         <Button Grid.Row="2"
                 BorderThickness="0"
                 Command="{Binding RunCommand}"
-                Content="Run"
+                Content="Launch"
+                FontWeight="Light"
                 >
             <Button.Style>
                 <Style TargetType="Button">
@@ -426,6 +469,10 @@
                             </MultiDataTrigger.Conditions>
                             <Setter Property="IsEnabled" Value="False" />
                         </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=WindowState}" Value="Maximized">
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="Padding" Value="0,0,0,5" />
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Button.Style>
