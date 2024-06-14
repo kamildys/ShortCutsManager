@@ -166,6 +166,12 @@ namespace ShortCuts_Manager
             {
                 addSingleForm.GetFormResult(out string name, out string path, out PathType pathType);
 
+                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+                {
+                    MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 var dataRow = new SingleShortCutInformation
                 {
                     Id = Guid.NewGuid(),
