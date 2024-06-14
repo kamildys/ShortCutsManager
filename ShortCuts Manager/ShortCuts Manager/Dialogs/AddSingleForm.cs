@@ -12,6 +12,9 @@ namespace ShortCuts_Manager.Dialogs
 {
     public class AddSingleForm : Window
     {
+        public string NameInput { get; set; }
+        public string PathInput { get; set; }
+
         private Label LabelName;
         private Label LabelPath;
         private Label PlbaelPathType;
@@ -119,6 +122,8 @@ namespace ShortCuts_Manager.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            NameInput = TextBoxName.Text;
+            PathInput = TextBoxPath.Text;
             DialogResult = true;
         }
 
@@ -139,6 +144,14 @@ namespace ShortCuts_Manager.Dialogs
             name = TextBoxName.Text;
             path = TextBoxPath.Text;
             pathType = GetSelectedPathType();
+        }
+
+        public void SetFormResult(string name, string path)
+        {
+            NameInput = name;
+            PathInput = path;
+            TextBoxName.Text = name;
+            TextBoxPath.Text = path;
         }
     }
 }

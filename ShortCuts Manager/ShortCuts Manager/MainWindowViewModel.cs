@@ -159,31 +159,89 @@ namespace ShortCuts_Manager
             }
         }
 
+        //public void AddSingle()
+        //{
+        //    AddSingleForm addSingleForm = new AddSingleForm();
+        //    if (addSingleForm.ShowDialog() == true)
+        //    {
+        //        addSingleForm.GetFormResult(out string name, out string path, out PathType pathType);
+
+        //        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+        //        {
+        //            MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            AddSingle();
+        //        } 
+        //        else if (SingleShortCutInformation.Any(x => x.Name == name))
+        //        {
+        //            MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            AddSingle(); 
+        //        }
+        //        else
+        //        {
+        //            var dataRow = new SingleShortCutInformation
+        //            {
+        //                Id = Guid.NewGuid(),
+        //                Name = name,
+        //                Path = path,
+        //                PathType = pathType
+        //            };
+
+        //            //SingleShortCutInformation.Add(dataRow);
+        //            SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
+
+        //            dataBase.AddSingle(dataRow);
+        //        }
+        //    }
+        //}
+
         public void AddSingle()
         {
-            AddSingleForm addSingleForm = new AddSingleForm();
-            if (addSingleForm.ShowDialog() == true)
-            {
-                addSingleForm.GetFormResult(out string name, out string path, out PathType pathType);
+            bool isFormValid = false;
+            string name = string.Empty;
+            string path = string.Empty;
 
-                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+            while (!isFormValid)
+            {
+                var addSingleForm = new AddSingleForm();
+
+                if (!string.IsNullOrEmpty(name) || !string.IsNullOrEmpty(path))
                 {
-                    MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    addSingleForm.SetFormResult(name, path);
                 }
 
-                var dataRow = new SingleShortCutInformation
+                if (addSingleForm.ShowDialog() == true)
                 {
-                    Id = Guid.NewGuid(),
-                    Name = name,
-                    Path = path,
-                    PathType = pathType
-                };
+                    addSingleForm.GetFormResult(out name, out path, out PathType pathType);
 
-                //SingleShortCutInformation.Add(dataRow);
-                SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
+                    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+                    {
+                        MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (SingleShortCutInformation.Any(x => x.Name == name))
+                    {
+                        MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        var dataRow = new SingleShortCutInformation
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = name,
+                            Path = path,
+                            PathType = pathType
+                        };
 
-                dataBase.AddSingle(dataRow);
+                        SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
+
+                        dataBase.AddSingle(dataRow);
+
+                        isFormValid = true;
+                    }
+                }
+                else
+                {
+                    isFormValid = true; 
+                }
             }
         }
         #endregion AddSingle
