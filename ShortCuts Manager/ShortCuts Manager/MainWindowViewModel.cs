@@ -21,7 +21,8 @@ namespace ShortCuts_Manager
         public int MainTabSelectedIndex { get; set; }
 
         public ObservableCollection<SingleShortCutInformation> SingleShortCutInformation { get; set; } = new ObservableCollection<SingleShortCutInformation>();
-        public List<SingleShortCutInformation> SelectedSingleShortCutInformation {
+        public List<SingleShortCutInformation> SelectedSingleShortCutInformation
+        {
             get
             {
                 return SingleShortCutInformation.Where(x => x.IsSelected).ToList();
@@ -123,7 +124,7 @@ namespace ShortCuts_Manager
                 return;
             }
 
-            if(GroupShortCutsInformation.Any(x => x.Name == enteredText))
+            if (GroupShortCutsInformation.Any(x => x.Name == enteredText))
             {
                 MessageBox.Show("Group with this name already exists!", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -159,48 +160,12 @@ namespace ShortCuts_Manager
             }
         }
 
-        //public void AddSingle()
-        //{
-        //    AddSingleForm addSingleForm = new AddSingleForm();
-        //    if (addSingleForm.ShowDialog() == true)
-        //    {
-        //        addSingleForm.GetFormResult(out string name, out string path, out PathType pathType);
-
-        //        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
-        //        {
-        //            MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //            AddSingle();
-        //        } 
-        //        else if (SingleShortCutInformation.Any(x => x.Name == name))
-        //        {
-        //            MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //            AddSingle(); 
-        //        }
-        //        else
-        //        {
-        //            var dataRow = new SingleShortCutInformation
-        //            {
-        //                Id = Guid.NewGuid(),
-        //                Name = name,
-        //                Path = path,
-        //                PathType = pathType
-        //            };
-
-        //            //SingleShortCutInformation.Add(dataRow);
-        //            SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
-
-        //            dataBase.AddSingle(dataRow);
-        //        }
-        //    }
-        //}
-
         public void AddSingle()
         {
-            bool isFormValid = false;
             string name = string.Empty;
             string path = string.Empty;
 
-            while (!isFormValid)
+            while (true)
             {
                 var addSingleForm = new AddSingleForm();
 
@@ -211,17 +176,7 @@ namespace ShortCuts_Manager
 
                 if (addSingleForm.ShowDialog() == true)
                 {
-                    addSingleForm.GetFormResult(out name, out path, out PathType pathType);
-
-                    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
-                    {
-                        MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                    else if (SingleShortCutInformation.Any(x => x.Name == name))
-                    {
-                        MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                    else
+                    if (addSingleForm.ValidateInput(out name, out path, out PathType pathType))
                     {
                         var dataRow = new SingleShortCutInformation
                         {
@@ -234,16 +189,16 @@ namespace ShortCuts_Manager
                         SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
 
                         dataBase.AddSingle(dataRow);
-
-                        isFormValid = true;
+                        break;
                     }
                 }
                 else
                 {
-                    isFormValid = true; 
+                    break;
                 }
             }
         }
+
         #endregion AddSingle
 
         #region DeleteSingle
@@ -265,7 +220,7 @@ namespace ShortCuts_Manager
 
         public void DeleteSingle()
         {
-            foreach(var info in SelectedSingleShortCutInformation.ToList())
+            foreach (var info in SelectedSingleShortCutInformation.ToList())
             {
                 SingleShortCutInformation.Remove(info);
                 dataBase.RemoveSingle(info);
@@ -321,7 +276,7 @@ namespace ShortCuts_Manager
             {
                 var pickedGroup = assignToGroupForm.ResultItem as GroupShortCutsInformation;
 
-                if(pickedGroup is null) return;
+                if (pickedGroup is null) return;
 
                 foreach (var newItem in SelectedSingleShortCutInformation)
                 {
@@ -358,7 +313,7 @@ namespace ShortCuts_Manager
 
         public void RemoveFromGroup()
         {
-            foreach(var ooo in SelectedGroupShortCutsInformation.ShortCuts.Where(x => x.IsSelected).ToList())
+            foreach (var ooo in SelectedGroupShortCutsInformation.ShortCuts.Where(x => x.IsSelected).ToList())
             {
                 SelectedGroupShortCutsInformation.ShortCuts.Remove(ooo);
                 dataBase.RemoveFromGroup(SelectedGroupShortCutsInformation, ooo);

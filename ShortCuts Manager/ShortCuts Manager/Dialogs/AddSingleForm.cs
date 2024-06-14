@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using ShortCuts_Manager.Helpers.Enums;
+using ShortCuts_Manager.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace ShortCuts_Manager.Dialogs
                 GroupName = "PathType",
             };
 
-            FileBTN.Checked += (s, e) => 
+            FileBTN.Checked += (s, e) =>
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
 
@@ -127,6 +128,30 @@ namespace ShortCuts_Manager.Dialogs
             DialogResult = true;
         }
 
+        public bool ValidateInput(out string name, out string path, out PathType pathType)
+        {
+            name = TextBoxName.Text.Trim();
+            path = TextBoxPath.Text.Trim();
+            pathType = GetSelectedPathType();
+
+            foreach (var item in (Application.Current.MainWindow.DataContext as MainWindowViewModel).SingleShortCutInformation)
+            {
+                if (item.Name == name)
+                {
+                    MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+            {
+                MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
         private PathType GetSelectedPathType()
         {
             if (FileBTN.IsChecked == true)
@@ -137,13 +162,6 @@ namespace ShortCuts_Manager.Dialogs
             {
                 return PathType.Url;
             }
-        }
-
-        internal void GetFormResult(out string name, out string path, out PathType pathType)
-        {
-            name = TextBoxName.Text;
-            path = TextBoxPath.Text;
-            pathType = GetSelectedPathType();
         }
 
         public void SetFormResult(string name, string path)
