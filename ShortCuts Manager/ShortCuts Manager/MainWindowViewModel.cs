@@ -18,6 +18,8 @@ namespace ShortCuts_Manager
         private IFileOpen? fileOpen;
         private IDataBase? dataBase;
 
+        public int MainTabSelectedIndex { get; set; }
+
         public ObservableCollection<SingleShortCutInformation> SingleShortCutInformation { get; set; } = new ObservableCollection<SingleShortCutInformation>();
         public List<SingleShortCutInformation> SelectedSingleShortCutInformation {
             get
@@ -60,16 +62,32 @@ namespace ShortCuts_Manager
 
         public void RunSelectedSingleShortCutInformation()
         {
-            OpenLinks(
-                urls: SelectedSingleShortCutInformation
-                        .Where(x => x.PathType == PathType.Url)
-                        .Select(x => x.Path)
-                        .ToArray(),
-                paths: SelectedSingleShortCutInformation
-                        .Where(x => x.PathType == PathType.File)
-                        .Select(x => x.Path)
-                        .ToArray()
-                );
+            if (MainTabSelectedIndex == 0)
+            {
+                OpenLinks(
+                    urls: SelectedSingleShortCutInformation
+                            .Where(x => x.PathType == PathType.Url)
+                            .Select(x => x.Path)
+                            .ToArray(),
+                    paths: SelectedSingleShortCutInformation
+                            .Where(x => x.PathType == PathType.File)
+                            .Select(x => x.Path)
+                            .ToArray()
+                    );
+            }
+            else
+            {
+                OpenLinks(
+                    urls: SelectedGroupShortCutsInformation.ShortCuts
+                            .Where(x => x.PathType == PathType.Url)
+                            .Select(x => x.Path)
+                            .ToArray(),
+                    paths: SelectedGroupShortCutsInformation.ShortCuts
+                            .Where(x => x.PathType == PathType.File)
+                            .Select(x => x.Path)
+                            .ToArray()
+                    );
+            }
         }
         #endregion Run
 
@@ -276,7 +294,7 @@ namespace ShortCuts_Manager
 
         public void RemoveFromGroup()
         {
-            foreach(var ooo in SelectedGroupShortCutsInformation.ShortCuts.ToList())
+            foreach(var ooo in SelectedGroupShortCutsInformation.ShortCuts.Where(x => x.IsSelected).ToList())
             {
                 SelectedGroupShortCutsInformation.ShortCuts.Remove(ooo);
                 dataBase.RemoveFromGroup(SelectedGroupShortCutsInformation, ooo);

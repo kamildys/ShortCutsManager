@@ -281,6 +281,7 @@
                     Grid.Row="1"
                     BorderThickness="1"
                     Margin="5"
+                    SelectedIndex="{Binding MainTabSelectedIndex}"
                     >
             <TabItem Name="TabSingle" Header="Single">
                 <ListBox x:Name="SingleShortCutInformationList"
@@ -314,30 +315,9 @@
                                     </Image.Style>
                                 </Image>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
-
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Assign to group">
-                                            <MenuItem.Icon>
-                                                <Image Source="{StaticResource AddToGroupIcon}" />
-                                            </MenuItem.Icon>
-                                            <MenuItem Header="1">
-                                                <MenuItem.Icon>
-                                                    <Image Source="{StaticResource GroupIcon}" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                        </MenuItem>
-                                        <MenuItem>
-                                            <MenuItem.Icon>
-                                                <Image Source="{StaticResource DeleteIcon}" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}" />
