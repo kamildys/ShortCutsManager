@@ -33,7 +33,7 @@ namespace ShortCuts_Manager.Helpers
         }
 
         /// <summary>
-        /// Forcess checking if execute is allowed
+        /// Forces checking if execute is allowed
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>

@@ -168,31 +168,43 @@ namespace ShortCuts_Manager
 
         public void AddSingle()
         {
-            AddSingleForm addSingleForm = new AddSingleForm();
-            if (addSingleForm.ShowDialog() == true)
-            {
-                addSingleForm.GetFormResult(out string name, out string path, out PathType pathType);
+            string name = string.Empty;
+            string path = string.Empty;
 
-                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+            while (true)
+            {
+                var addSingleForm = new AddSingleForm();
+
+                if (!string.IsNullOrEmpty(name) || !string.IsNullOrEmpty(path))
                 {
-                    MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    addSingleForm.SetFormResult(name, path);
                 }
 
-                var dataRow = new SingleShortCutInformation
+                if (addSingleForm.ShowDialog() == true)
                 {
-                    Id = Guid.NewGuid(),
-                    Name = name,
-                    Path = path,
-                    PathType = pathType
-                };
+                    if (addSingleForm.ValidateInput(out name, out path, out PathType pathType))
+                    {
+                        var dataRow = new SingleShortCutInformation
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = name,
+                            Path = path,
+                            PathType = pathType
+                        };
 
-                //SingleShortCutInformation.Add(dataRow);
-                SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
+                        SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
 
-                dataBase.AddSingle(dataRow);
+                        dataBase.AddSingle(dataRow);
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
         }
+
         #endregion AddSingle
 
         #region DeleteSingle

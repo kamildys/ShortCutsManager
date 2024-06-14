@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using ShortCuts_Manager.Helpers.Enums;
+using ShortCuts_Manager.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,9 @@ namespace ShortCuts_Manager.Dialogs
 {
     public class AddSingleForm : Window
     {
+        public string NameInput { get; set; }
+        public string PathInput { get; set; }
+
         private Label LabelName;
         private Label LabelPath;
         private Label PlbaelPathType;
@@ -78,7 +82,7 @@ namespace ShortCuts_Manager.Dialogs
                 GroupName = "PathType",
             };
 
-            FileBTN.Checked += (s, e) => 
+            FileBTN.Checked += (s, e) =>
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
 
@@ -123,7 +127,33 @@ namespace ShortCuts_Manager.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            NameInput = TextBoxName.Text;
+            PathInput = TextBoxPath.Text;
             DialogResult = true;
+        }
+
+        public bool ValidateInput(out string name, out string path, out PathType pathType)
+        {
+            name = TextBoxName.Text.Trim();
+            path = TextBoxPath.Text.Trim();
+            pathType = GetSelectedPathType();
+
+            foreach (var item in (Application.Current.MainWindow.DataContext as MainWindowViewModel).SingleShortCutInformation)
+            {
+                if (item.Name == name)
+                {
+                    MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+            {
+                MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
         }
 
         private PathType GetSelectedPathType()
@@ -138,11 +168,12 @@ namespace ShortCuts_Manager.Dialogs
             }
         }
 
-        internal void GetFormResult(out string name, out string path, out PathType pathType)
+        public void SetFormResult(string name, string path)
         {
-            name = TextBoxName.Text;
-            path = TextBoxPath.Text;
-            pathType = GetSelectedPathType();
+            NameInput = name;
+            PathInput = path;
+            TextBoxName.Text = name;
+            TextBoxPath.Text = path;
         }
     }
 }
