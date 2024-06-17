@@ -18,7 +18,6 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
-
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -30,8 +29,11 @@
     <Grid>
 
         <Grid.RowDefinitions>
+            <!--  TopBar  -->
             <RowDefinition Height="Auto" />
+            <!--  Logo & Content  -->
             <RowDefinition Height="*" />
+            <!--  Launch  -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -70,6 +72,7 @@
                         />
                 <Label />
             </DockPanel>
+
 
             <Grid Grid.Row="1"
                   HorizontalAlignment="Center"
@@ -202,25 +205,13 @@
                          BorderThickness="0"
                          ItemsSource="{Binding SingleShortCutInformation}"
                          SelectionMode="Extended"
+                         Style="{StaticResource SingleInfo}"
                          >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
                             <i:InvokeCommandAction Command="{Binding RunCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
-                                <Image Style="{DynamicResource IconImage}" />
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}" />
-                        </Style>
-                    </ListBox.ItemContainerStyle>
                 </ListBox>
             </TabItem>
             <TabItem Name="TabGroups" Header="Groups">
@@ -230,7 +221,6 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-
                     <ListBox x:Name="GroupShortCutInformationList"
                              Grid.Row="0"
                              BorderThickness="0"
@@ -241,20 +231,13 @@
                                                     UpdateSourceTrigger=PropertyChanged,
                                                     Mode=TwoWay}"
                              SelectionMode="Single"
+                             Style="{StaticResource GroupInfo}"
                              >
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
                                 <i:InvokeCommandAction Command="{Binding RunCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
-                                    <Image Source="{StaticResource GroupIcon}" Style="{StaticResource DisplayImage}" />
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
                     </ListBox>
                     <Label Grid.Row="1" Content="Assigned:" />
                     <ListBox x:Name="AssignedToGroup"
@@ -263,21 +246,8 @@
                              ItemsSource="{Binding SelectedGroupShortCutsInformation.ShortCuts,
                                                    Mode=TwoWay}"
                              SelectionMode="Extended"
-                             >
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
-                                    <Image Style="{DynamicResource IconImage}" />
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListBoxItem}">
-                                <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}" />
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ListBox>
+                             Style="{StaticResource SingleInfo}"
+                             />
                 </Grid>
             </TabItem>
         </TabControl>
