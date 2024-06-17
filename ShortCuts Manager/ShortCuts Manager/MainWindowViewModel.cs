@@ -119,17 +119,17 @@ namespace ShortCuts_Manager
 
         public void RunSpecific(object info)
         {
-            if(info is SingleShortCutInformation infoSingleShortCutInformation)
+            if (info is SingleShortCutInformation infoSingleShortCutInformation)
             {
-                if(infoSingleShortCutInformation.PathType == PathType.Url)
+                if (infoSingleShortCutInformation.PathType == PathType.Url)
                 {
                     urlOpen?.OpenUrlsInDefaultBrowser(urls: [infoSingleShortCutInformation.Path]);
                 }
-                else if(infoSingleShortCutInformation.PathType == PathType.File)
+                else if (infoSingleShortCutInformation.PathType == PathType.File)
                 {
                     fileOpen?.OpenFiles(paths: [infoSingleShortCutInformation.Path]);
                 }
-                else if(infoSingleShortCutInformation.PathType == PathType.Folder)
+                else if (infoSingleShortCutInformation.PathType == PathType.Folder)
                 {
                     folderOpen?.OpenFolders(folders: [infoSingleShortCutInformation.Path]);
                 }
@@ -227,41 +227,21 @@ namespace ShortCuts_Manager
 
         public void AddSingle()
         {
-            string name = string.Empty;
-            string path = string.Empty;
+            var addSingleForm = new AddSingleForm();
+            addSingleForm.ShowDialog();
 
-            while (true)
+            if (addSingleForm.DialogResult == false) return;
+
+            var dataRow = new SingleShortCutInformation
             {
-                var addSingleForm = new AddSingleForm();
+                Id = Guid.NewGuid(),
+                Name = addSingleForm.NameInput,
+                Path = addSingleForm.PathInput,
+                PathType = addSingleForm.PathType
+            };
 
-                if (!string.IsNullOrEmpty(name) || !string.IsNullOrEmpty(path))
-                {
-                    addSingleForm.SetFormResult(name, path);
-                }
-
-                if (addSingleForm.ShowDialog() == true)
-                {
-                    if (addSingleForm.ValidateInput(out name, out path, out PathType pathType))
-                    {
-                        var dataRow = new SingleShortCutInformation
-                        {
-                            Id = Guid.NewGuid(),
-                            Name = name,
-                            Path = path,
-                            PathType = pathType
-                        };
-
-                        SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
-
-                        dataBase.AddSingle(dataRow);
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
+            SingleShortCutInformation.AddSorted(dataRow, x => x.Name);
+            dataBase.AddSingle(dataRow);
         }
 
         #endregion AddSingle

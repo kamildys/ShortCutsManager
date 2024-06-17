@@ -15,13 +15,13 @@ namespace ShortCuts_Manager.Dialogs
     {
         public string NameInput { get; set; }
         public string PathInput { get; set; }
+        public PathType PathType { get; set; }
 
         private Label LabelName;
         private Label LabelPath;
         private Label PlbaelPathType;
 
         private TextBox TextBoxName;
-
         private TextBox TextBoxPath;
 
         private RadioButton FileBTN;
@@ -145,29 +145,30 @@ namespace ShortCuts_Manager.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!ValidateInput()) return;
+
             NameInput = TextBoxName.Text;
             PathInput = TextBoxPath.Text;
+            PathType = GetSelectedPathType();
+
             DialogResult = true;
         }
 
-        public bool ValidateInput(out string name, out string path, out PathType pathType)
+        public bool ValidateInput()
         {
-            name = TextBoxName.Text.Trim();
-            path = TextBoxPath.Text.Trim();
-            pathType = GetSelectedPathType();
-
-            foreach (var item in (Application.Current.MainWindow.DataContext as MainWindowViewModel).SingleShortCutInformation)
-            {
-                if (item.Name == name)
-                {
-                    MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return false;
-                }
-            }
+            var name = TextBoxName.Text.Trim();
+            var path = TextBoxPath.Text.Trim();
+            var pathType = GetSelectedPathType();
 
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
             {
                 MessageBox.Show("Path and Name cannot be empty", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if ((Application.Current.MainWindow.DataContext as MainWindowViewModel).SingleShortCutInformation.Any(x => x.Name == name))
+            {
+                MessageBox.Show("Name already exists", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -188,14 +189,6 @@ namespace ShortCuts_Manager.Dialogs
             {
                 return PathType.Url;
             }
-        }
-
-        public void SetFormResult(string name, string path)
-        {
-            NameInput = name;
-            PathInput = path;
-            TextBoxName.Text = name;
-            TextBoxPath.Text = path;
         }
     }
 }
