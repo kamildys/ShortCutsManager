@@ -5,6 +5,7 @@ using ShortCuts_Manager.Helpers.Enums;
 using ShortCuts_Manager.Interfaces;
 using ShortCuts_Manager.Models;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace ShortCuts_Manager
 {
     public class MainWindowViewModel
     {
-        //private System.Windows.Forms.NotifyIcon NotifyIcon;
+        private AppNotifyIcon appNotifyIcon { get; set; } = new AppNotifyIcon();
 
         private IUrlOpen? urlOpen;
         private IFileOpen? fileOpen;
@@ -45,7 +46,7 @@ namespace ShortCuts_Manager
             SingleShortCutInformation = new ObservableCollection<SingleShortCutInformation>(dataBase.SingleShortCutInformation.OrderBy(x => x.Name));
             GroupShortCutsInformation = new ObservableCollection<GroupShortCutsInformation>(dataBase.GroupShortCutsInformation.OrderBy(x => x.Name));
 
-            InitNotifyIcon();
+            appNotifyIcon.InitNotifyIcon();
         }
 
         #region Commands
@@ -56,7 +57,7 @@ namespace ShortCuts_Manager
         {
             get
             {
-                return _runCommand ?? (_runCommand = new CommandHandler(() => RunSelectedSingleShortCutInformation(), () => CanRun));
+                return _runCommand ?? (_runCommand = new CommandHandler((param) => RunSelectedSingleShortCutInformation(), () => CanRun));
             }
         }
         public bool CanRun
@@ -106,13 +107,64 @@ namespace ShortCuts_Manager
         }
         #endregion Run
 
+        #region RunSpecific
+        private ICommand _runSpecificCommand;
+        public ICommand RunSpecificCommand
+        {
+            get
+            {
+                return _runSpecificCommand ?? (_runSpecificCommand = new CommandHandler((param) => RunSpecific(param), () => true));
+            }
+        }
+
+        public void RunSpecific(object info)
+        {
+            if(info is SingleShortCutInformation infoSingleShortCutInformation)
+            {
+                if(infoSingleShortCutInformation.PathType == PathType.Url)
+                {
+                    urlOpen?.OpenUrlsInDefaultBrowser(urls: [infoSingleShortCutInformation.Path]);
+                }
+                else if(infoSingleShortCutInformation.PathType == PathType.File)
+                {
+                    fileOpen?.OpenFiles(paths: [infoSingleShortCutInformation.Path]);
+                }
+                else if(infoSingleShortCutInformation.PathType == PathType.Folder)
+                {
+                    folderOpen?.OpenFolders(folders: [infoSingleShortCutInformation.Path]);
+                }
+                return;
+            }
+
+            if (info is GroupShortCutsInformation infoGroupShortCutsInformation)
+            {
+                OpenLinks(
+                urls: infoGroupShortCutsInformation.ShortCuts
+                        .Where(x => x.PathType == PathType.Url)
+                        .Select(x => x.Path)
+                        .ToArray(),
+                paths: infoGroupShortCutsInformation.ShortCuts
+                        .Where(x => x.PathType == PathType.File)
+                        .Select(x => x.Path)
+                        .ToArray(),
+                folders: infoGroupShortCutsInformation.ShortCuts
+                        .Where(x => x.PathType == PathType.Folder)
+                        .Select(x => x.Path)
+                        .ToArray()
+                );
+
+                return;
+            }
+        }
+        #endregion RunSpecific
+
         #region AddGroup
         private ICommand _addGroupCommand;
         public ICommand AddGroupCommand
         {
             get
             {
-                return _addGroupCommand ?? (_addGroupCommand = new CommandHandler(() => AddGroup(), () => CanAddGroup));
+                return _addGroupCommand ?? (_addGroupCommand = new CommandHandler((param) => AddGroup(), () => CanAddGroup));
             }
         }
         public bool CanAddGroup
@@ -162,7 +214,7 @@ namespace ShortCuts_Manager
         {
             get
             {
-                return _addSingleCommand ?? (_addSingleCommand = new CommandHandler(() => AddSingle(), () => CanAddSingle));
+                return _addSingleCommand ?? (_addSingleCommand = new CommandHandler((param) => AddSingle(), () => CanAddSingle));
             }
         }
         public bool CanAddSingle
@@ -220,7 +272,7 @@ namespace ShortCuts_Manager
         {
             get
             {
-                return _deleteSingleCommand ?? (_deleteSingleCommand = new CommandHandler(() => DeleteSingle(), () => CanDeleteSingle));
+                return _deleteSingleCommand ?? (_deleteSingleCommand = new CommandHandler((param) => DeleteSingle(), () => CanDeleteSingle));
             }
         }
         public bool CanDeleteSingle
@@ -247,7 +299,7 @@ namespace ShortCuts_Manager
         {
             get
             {
-                return _deleteGroupCommand ?? (_deleteGroupCommand = new CommandHandler(() => DeleteGroup(), () => CanDeleteGroup));
+                return _deleteGroupCommand ?? (_deleteGroupCommand = new CommandHandler((param) => DeleteGroup(), () => CanDeleteGroup));
             }
         }
         public bool CanDeleteGroup
@@ -271,7 +323,7 @@ namespace ShortCuts_Manager
         {
             get
             {
-                return _assignToGroupCommand ?? (_assignToGroupCommand = new CommandHandler(() => AssignToGroup(), () => CanAssignToGroup));
+                return _assignToGroupCommand ?? (_assignToGroupCommand = new CommandHandler((param) => AssignToGroup(), () => CanAssignToGroup));
             }
         }
         public bool CanAssignToGroup
@@ -313,7 +365,7 @@ namespace ShortCuts_Manager
         {
             get
             {
-                return _removeFromGroupCommand ?? (_removeFromGroupCommand = new CommandHandler(() => RemoveFromGroup(), () => CanRemoveFromGroup));
+                return _removeFromGroupCommand ?? (_removeFromGroupCommand = new CommandHandler((param) => RemoveFromGroup(), () => CanRemoveFromGroup));
             }
         }
         public bool CanRemoveFromGroup
@@ -344,68 +396,5 @@ namespace ShortCuts_Manager
 
             folderOpen?.OpenFolders(folders: folders);
         }
-
-        #region NotifyIcon
-        public void InitNotifyIcon()
-        {
-            var NotifyIcon = new NotifyIcon()
-            {
-                Icon = new Icon("C:\\GIT\\ShortCutsManager\\ShortCuts Manager\\ShortCuts Manager\\Resources\\icon.ico"),
-                Visible = true,
-                Text = "ShortCuts Manager",
-            };
-
-            NotifyIcon.Click += NotifyIcon_Click;
-
-            ContextMenu contextMenu = new ContextMenu();
-
-            var contextMenuStrip = new ContextMenuStrip();
-
-            var singleMenuItem = new ToolStripMenuItem
-            {
-                Text = "Single"
-            };
-
-            singleMenuItem.DropDownOpening += SingleMenuItem_DropDownOpening;
-            singleMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[] { new ToolStripMenuItem() { } });
-
-            var groupsMenuItem = new ToolStripMenuItem
-            {
-                Text = "Groups"
-            };
-
-            contextMenuStrip.Items.AddRange(new ToolStripItem[]
-            {
-                singleMenuItem,
-                groupsMenuItem
-            });
-
-            NotifyIcon.ContextMenuStrip = contextMenuStrip;
-        }
-
-        private void SingleMenuItem_DropDownOpening(object? sender, EventArgs e)
-        {
-            var senderToolStripMenuItem = sender as ToolStripMenuItem;
-
-            senderToolStripMenuItem.DropDownItems.Clear();
-
-            senderToolStripMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[]
-            {
-                new ToolStripMenuItem()
-                {
-                    Text = "subItem"
-                }
-            });
-        }
-
-        private void NotifyIcon_Click(object? sender, EventArgs e)
-        {
-            if ((e as System.Windows.Forms.MouseEventArgs).Button == MouseButtons.Right) return;
-
-            System.Windows.Application.Current.MainWindow.Show();
-            System.Windows.Application.Current.MainWindow.WindowState = System.Windows.WindowState.Normal;
-            System.Windows.Application.Current.MainWindow.Activate();
-        }
-        #endregion NotifyIcon
     }
 }
