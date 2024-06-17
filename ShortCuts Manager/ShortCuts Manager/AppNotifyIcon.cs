@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Application = System.Windows.Application;
 
 namespace ShortCuts_Manager
 {
@@ -51,26 +52,19 @@ namespace ShortCuts_Manager
 
         private void SingleMenuItem_DropDownOpening(object? sender, EventArgs e)
         {
-            var senderToolStripMenuItem = sender as ToolStripMenuItem;
-
-            senderToolStripMenuItem.DropDownItems.Clear();
-
-            var dropDownItems = new List<ToolStripMenuItem> { };
-
-            foreach (var info in (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).SingleShortCutInformation)
-            {
-                dropDownItems.Add(new ToolStripMenuItem()
-                {
-                    Text = info.Name,
-                    Command = (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).RunSpecificCommand,
-                    CommandParameter = info
-                });
-            }
-
-            senderToolStripMenuItem.DropDownItems.AddRange(dropDownItems.ToArray());
+            SetMenuItems(
+                sender: sender as ToolStripMenuItem,
+                elements: (Application.Current.MainWindow.DataContext as MainWindowViewModel).SingleShortCutInformation);
         }
 
         private void GroupsMenuItem_DropDownOpening(object? sender, EventArgs e)
+        {
+            SetMenuItems(
+                sender: sender as ToolStripMenuItem,
+                elements: (Application.Current.MainWindow.DataContext as MainWindowViewModel).GroupShortCutsInformation);
+        }
+
+        private void SetMenuItems<T>(ToolStripMenuItem sender, IEnumerable<T> elements)
         {
             var senderToolStripMenuItem = sender as ToolStripMenuItem;
 
@@ -78,12 +72,12 @@ namespace ShortCuts_Manager
 
             var dropDownItems = new List<ToolStripMenuItem> { };
 
-            foreach (var info in (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).GroupShortCutsInformation)
+            foreach (var info in elements)
             {
                 dropDownItems.Add(new ToolStripMenuItem()
                 {
-                    Text = info.Name,
-                    Command = (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).RunSpecificCommand,
+                    Text = (info as dynamic).Name,
+                    Command = (Application.Current.MainWindow.DataContext as MainWindowViewModel).RunSpecificCommand,
                     CommandParameter = info
                 });
             }
@@ -95,9 +89,9 @@ namespace ShortCuts_Manager
         {
             if ((e as System.Windows.Forms.MouseEventArgs).Button == MouseButtons.Right) return;
 
-            System.Windows.Application.Current.MainWindow.Show();
-            System.Windows.Application.Current.MainWindow.WindowState = System.Windows.WindowState.Normal;
-            System.Windows.Application.Current.MainWindow.Activate();
+            Application.Current.MainWindow.Show();
+            Application.Current.MainWindow.WindowState = System.Windows.WindowState.Normal;
+            Application.Current.MainWindow.Activate();
         }
     }
 }

@@ -10,28 +10,23 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
+using Application = System.Windows.Application;
 
 namespace ShortCuts_Manager
 {
     public class MainWindowViewModel
     {
-        private AppNotifyIcon appNotifyIcon { get; set; } = new AppNotifyIcon();
+        private AppNotifyIcon AppNotifyIcon { get; set; } = new AppNotifyIcon();
 
-        private IUrlOpen? urlOpen;
-        private IFileOpen? fileOpen;
-        private IFolderOpen? folderOpen;
-        private IDataBase? dataBase;
+        private readonly IUrlOpen? urlOpen;
+        private readonly IFileOpen? fileOpen;
+        private readonly IFolderOpen? folderOpen;
+        private readonly IDataBase? dataBase;
 
         public int MainTabSelectedIndex { get; set; }
 
         public ObservableCollection<SingleShortCutInformation> SingleShortCutInformation { get; set; } = new ObservableCollection<SingleShortCutInformation>();
-        public List<SingleShortCutInformation> SelectedSingleShortCutInformation
-        {
-            get
-            {
-                return SingleShortCutInformation.Where(x => x.IsSelected).ToList();
-            }
-        }
+        public List<SingleShortCutInformation> SelectedSingleShortCutInformation => SingleShortCutInformation.Where(x => x.IsSelected).ToList();
 
         public ObservableCollection<GroupShortCutsInformation> GroupShortCutsInformation { get; set; } = new ObservableCollection<GroupShortCutsInformation>();
         public GroupShortCutsInformation? SelectedGroupShortCutsInformation { get; set; }
@@ -46,27 +41,14 @@ namespace ShortCuts_Manager
             SingleShortCutInformation = new ObservableCollection<SingleShortCutInformation>(dataBase.SingleShortCutInformation.OrderBy(x => x.Name));
             GroupShortCutsInformation = new ObservableCollection<GroupShortCutsInformation>(dataBase.GroupShortCutsInformation.OrderBy(x => x.Name));
 
-            appNotifyIcon.InitNotifyIcon();
+            AppNotifyIcon.InitNotifyIcon();
         }
 
         #region Commands
 
         #region Run
         private ICommand _runCommand;
-        public ICommand RunCommand
-        {
-            get
-            {
-                return _runCommand ?? (_runCommand = new CommandHandler((param) => RunSelectedSingleShortCutInformation(), () => CanRun));
-            }
-        }
-        public bool CanRun
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand RunCommand => _runCommand ??= new CommandHandler((param) => RunSelectedSingleShortCutInformation(), () => true);
 
         public void RunSelectedSingleShortCutInformation()
         {
@@ -82,9 +64,9 @@ namespace ShortCuts_Manager
                             .Select(x => x.Path)
                             .ToArray(),
                     folders: SelectedSingleShortCutInformation
-                        .Where(x => x.PathType == PathType.Folder)
-                        .Select(x => x.Path)
-                        .ToArray()
+                            .Where(x => x.PathType == PathType.Folder)
+                            .Select(x => x.Path)
+                            .ToArray()
                     );
             }
             else
@@ -109,13 +91,7 @@ namespace ShortCuts_Manager
 
         #region RunSpecific
         private ICommand _runSpecificCommand;
-        public ICommand RunSpecificCommand
-        {
-            get
-            {
-                return _runSpecificCommand ?? (_runSpecificCommand = new CommandHandler((param) => RunSpecific(param), () => true));
-            }
-        }
+        public ICommand RunSpecificCommand => _runSpecificCommand ??= new CommandHandler((param) => RunSpecific(param), () => true);
 
         public void RunSpecific(object info)
         {
@@ -160,24 +136,11 @@ namespace ShortCuts_Manager
 
         #region AddGroup
         private ICommand _addGroupCommand;
-        public ICommand AddGroupCommand
-        {
-            get
-            {
-                return _addGroupCommand ?? (_addGroupCommand = new CommandHandler((param) => AddGroup(), () => CanAddGroup));
-            }
-        }
-        public bool CanAddGroup
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand AddGroupCommand => _addGroupCommand ??= new CommandHandler((param) => AddGroup(), () => true);
 
         public void AddGroup()
         {
-            string enteredText = null;
+            string? enteredText = null;
 
             InputTextDialog inputDialog = new InputTextDialog("Enter name:");
             if (inputDialog.ShowDialog() == true)
@@ -192,7 +155,7 @@ namespace ShortCuts_Manager
 
             if (GroupShortCutsInformation.Any(x => x.Name == enteredText))
             {
-                MessageBox.Show("Group with this name already exists!", System.Windows.Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Group with this name already exists!", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -210,24 +173,12 @@ namespace ShortCuts_Manager
 
         #region AddSingle
         private ICommand _addSingleCommand;
-        public ICommand AddSingleCommand
-        {
-            get
-            {
-                return _addSingleCommand ?? (_addSingleCommand = new CommandHandler((param) => AddSingle(), () => CanAddSingle));
-            }
-        }
-        public bool CanAddSingle
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand AddSingleCommand => _addSingleCommand ??= new CommandHandler((param) => AddSingle(), () => true);
 
         public void AddSingle()
         {
             var addSingleForm = new AddSingleForm();
+
             addSingleForm.ShowDialog();
 
             if (addSingleForm.DialogResult == false) return;
@@ -248,20 +199,7 @@ namespace ShortCuts_Manager
 
         #region DeleteSingle
         private ICommand _deleteSingleCommand;
-        public ICommand DeleteSingleCommand
-        {
-            get
-            {
-                return _deleteSingleCommand ?? (_deleteSingleCommand = new CommandHandler((param) => DeleteSingle(), () => CanDeleteSingle));
-            }
-        }
-        public bool CanDeleteSingle
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand DeleteSingleCommand => _deleteSingleCommand ??= new CommandHandler((param) => DeleteSingle(), () => true);
 
         public void DeleteSingle()
         {
@@ -275,20 +213,7 @@ namespace ShortCuts_Manager
 
         #region DeleteGroup
         private ICommand _deleteGroupCommand;
-        public ICommand DeleteGroupCommand
-        {
-            get
-            {
-                return _deleteGroupCommand ?? (_deleteGroupCommand = new CommandHandler((param) => DeleteGroup(), () => CanDeleteGroup));
-            }
-        }
-        public bool CanDeleteGroup
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand DeleteGroupCommand => _deleteGroupCommand ??= new CommandHandler((param) => DeleteGroup(), () => true);
 
         public void DeleteGroup()
         {
@@ -299,20 +224,7 @@ namespace ShortCuts_Manager
 
         #region AssignToGroup
         private ICommand _assignToGroupCommand;
-        public ICommand AssignToGroupCommand
-        {
-            get
-            {
-                return _assignToGroupCommand ?? (_assignToGroupCommand = new CommandHandler((param) => AssignToGroup(), () => CanAssignToGroup));
-            }
-        }
-        public bool CanAssignToGroup
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand AssignToGroupCommand => _assignToGroupCommand ??= new CommandHandler((param) => AssignToGroup(), () => true);
 
         public void AssignToGroup()
         {
@@ -341,20 +253,7 @@ namespace ShortCuts_Manager
 
         #region RemoveFromGroup
         private ICommand _removeFromGroupCommand;
-        public ICommand RemoveFromGroupCommand
-        {
-            get
-            {
-                return _removeFromGroupCommand ?? (_removeFromGroupCommand = new CommandHandler((param) => RemoveFromGroup(), () => CanRemoveFromGroup));
-            }
-        }
-        public bool CanRemoveFromGroup
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public ICommand RemoveFromGroupCommand => _removeFromGroupCommand ??= new CommandHandler((param) => RemoveFromGroup(), () => true);
 
         public void RemoveFromGroup()
         {
@@ -371,9 +270,7 @@ namespace ShortCuts_Manager
         public void OpenLinks(string[] urls, string[] paths, string[] folders)
         {
             urlOpen?.OpenUrlsInDefaultBrowser(urls: urls);
-
             fileOpen?.OpenFiles(paths: paths);
-
             folderOpen?.OpenFolders(folders: folders);
         }
     }
