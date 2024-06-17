@@ -1,13 +1,6 @@
-﻿using ShortCuts_Manager.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Interop;
 using Application = System.Windows.Application;
+using Keyboard = ShortCuts_Manager.Helpers.Keyboard;
 
 namespace ShortCuts_Manager
 {
@@ -19,35 +12,40 @@ namespace ShortCuts_Manager
         {
             var NotifyIcon = new NotifyIcon()
             {
-                Icon = new Icon(System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/Resources/icon.ico"))?.Stream),
+                Icon = new Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Resources/icon.ico"))?.Stream),
                 Visible = true,
                 Text = "ShortCuts Manager",
             };
 
             var singleMenuItem = new ToolStripMenuItem
             {
-                Text = "Single",
+                Text = "     " + "Single" + "          ",
             };
             singleMenuItem.DropDownOpening += SingleMenuItem_DropDownOpening;
             singleMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[] { new ToolStripMenuItem() { } });
+            singleMenuItem.DropDown.MaximumSize = new Size(500, 200);
 
             var groupsMenuItem = new ToolStripMenuItem
             {
-                Text = "Groups",
+                Text = "     " + "Groups" + "          ",
             };
             groupsMenuItem.DropDownOpening += GroupsMenuItem_DropDownOpening;
             groupsMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[] { new ToolStripMenuItem() { } });
+            groupsMenuItem.DropDown.MaximumSize = new Size(500, 200);
 
             var contextMenuStrip = new ContextMenuStrip();
             contextMenuStrip.ShowImageMargin = false;
+
             contextMenuStrip.Items.AddRange(new ToolStripItem[]
             {
                 singleMenuItem,
-                groupsMenuItem
+                new ToolStripSeparator(),
+                groupsMenuItem,
             });
 
             NotifyIcon.ContextMenuStrip = contextMenuStrip;
             NotifyIcon.Click += NotifyIcon_Click;
+            ComponentDispatcher.ThreadFilterMessage += ComponentDispatcher_ThreadFilterMessage;
         }
 
         private void SingleMenuItem_DropDownOpening(object? sender, EventArgs e)
@@ -78,7 +76,7 @@ namespace ShortCuts_Manager
                 {
                     Text = (info as dynamic).Name,
                     Command = (Application.Current.MainWindow.DataContext as MainWindowViewModel).RunSpecificCommand,
-                    CommandParameter = info
+                    CommandParameter = info,
                 });
             }
 
@@ -92,6 +90,35 @@ namespace ShortCuts_Manager
             Application.Current.MainWindow.Show();
             Application.Current.MainWindow.WindowState = System.Windows.WindowState.Normal;
             Application.Current.MainWindow.Activate();
+        }
+
+        private void ComponentDispatcher_ThreadFilterMessage(ref MSG msg, ref bool handled)
+        {
+            const int WM_MOUSEWHEEL = 0x020A;
+
+            if (msg.message == WM_MOUSEWHEEL)
+            {
+                int delta = 0;
+                unchecked
+                {
+                    int wParam = (int)msg.wParam;
+                    delta = (short)((wParam >> 16) & 0xFFFF);
+                }
+                OnMouseWheel(delta);
+                handled = true;
+            }
+        }
+
+        private void OnMouseWheel(long delta)
+        {
+            if (delta > 0)
+            {
+                Keyboard.KeyUp();
+            }
+            else
+            {
+                Keyboard.KeyDown();
+            }
         }
     }
 }
