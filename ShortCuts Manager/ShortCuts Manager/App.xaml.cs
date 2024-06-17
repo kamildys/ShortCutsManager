@@ -17,6 +17,7 @@ namespace ShortCuts_Manager
             var services = new ServiceCollection();
 
             services.AddScoped<IFileOpen, FileOpen>();
+            services.AddScoped<IFolderOpen, FolderOpen>();
             services.AddScoped<IUrlOpen, UrlOpen>();
             services.AddScoped<IDataBase, FileXMLDataBase>();
 
@@ -29,5 +30,4 @@ namespace ShortCuts_Manager
             serviceProvider.GetService<MainWindow>()?.Show();
         }
     }
-
 }

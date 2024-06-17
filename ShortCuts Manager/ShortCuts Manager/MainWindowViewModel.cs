@@ -5,10 +5,8 @@ using ShortCuts_Manager.Helpers.Enums;
 using ShortCuts_Manager.Interfaces;
 using ShortCuts_Manager.Models;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
 
@@ -20,6 +18,7 @@ namespace ShortCuts_Manager
 
         private IUrlOpen? urlOpen;
         private IFileOpen? fileOpen;
+        private IFolderOpen? folderOpen;
         private IDataBase? dataBase;
 
         public int MainTabSelectedIndex { get; set; }
@@ -36,10 +35,11 @@ namespace ShortCuts_Manager
         public ObservableCollection<GroupShortCutsInformation> GroupShortCutsInformation { get; set; } = new ObservableCollection<GroupShortCutsInformation>();
         public GroupShortCutsInformation? SelectedGroupShortCutsInformation { get; set; }
 
-        public MainWindowViewModel(IUrlOpen urlOpen, IFileOpen fileOpen, IDataBase dataBase)
+        public MainWindowViewModel(IUrlOpen urlOpen, IFileOpen fileOpen, IFolderOpen folderOpen, IDataBase dataBase)
         {
             this.urlOpen = urlOpen;
             this.fileOpen = fileOpen;
+            this.folderOpen = folderOpen;
             this.dataBase = dataBase;
 
             SingleShortCutInformation = new ObservableCollection<SingleShortCutInformation>(dataBase.SingleShortCutInformation.OrderBy(x => x.Name));
@@ -79,7 +79,11 @@ namespace ShortCuts_Manager
                     paths: SelectedSingleShortCutInformation
                             .Where(x => x.PathType == PathType.File)
                             .Select(x => x.Path)
-                            .ToArray()
+                            .ToArray(),
+                    folders: SelectedSingleShortCutInformation
+                        .Where(x => x.PathType == PathType.Folder)
+                        .Select(x => x.Path)
+                        .ToArray()
                     );
             }
             else
@@ -92,7 +96,11 @@ namespace ShortCuts_Manager
                     paths: SelectedGroupShortCutsInformation.ShortCuts
                             .Where(x => x.PathType == PathType.File)
                             .Select(x => x.Path)
-                            .ToArray()
+                            .ToArray(),
+                    folders: SelectedGroupShortCutsInformation.ShortCuts
+                        .Where(x => x.PathType == PathType.Folder)
+                        .Select(x => x.Path)
+                        .ToArray()
                     );
             }
         }
@@ -142,7 +150,6 @@ namespace ShortCuts_Manager
                 Name = enteredText
             };
 
-            //GroupShortCutsInformation.Add(dataRow);
             GroupShortCutsInformation.AddSorted(dataRow, x => x.Name);
 
             dataBase.AddGroup(dataRow);
@@ -329,11 +336,13 @@ namespace ShortCuts_Manager
 
         #endregion Commands
 
-        public void OpenLinks(string[] urls, string[] paths)
+        public void OpenLinks(string[] urls, string[] paths, string[] folders)
         {
             urlOpen?.OpenUrlsInDefaultBrowser(urls: urls);
 
             fileOpen?.OpenFiles(paths: paths);
+
+            folderOpen?.OpenFolders(folders: folders);
         }
 
         #region NotifyIcon
@@ -358,7 +367,7 @@ namespace ShortCuts_Manager
             };
 
             singleMenuItem.DropDownOpening += SingleMenuItem_DropDownOpening;
-            singleMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[]{new ToolStripMenuItem(){}});
+            singleMenuItem.DropDownItems.AddRange(new ToolStripMenuItem[] { new ToolStripMenuItem() { } });
 
             var groupsMenuItem = new ToolStripMenuItem
             {

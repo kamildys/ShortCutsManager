@@ -1,11 +1,4 @@
-﻿using Microsoft.Win32;
-using ShortCuts_Manager.Helpers.Enums;
-using ShortCuts_Manager.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ShortCuts_Manager.Helpers.Enums;
 using System.Windows;
 using System.Windows.Controls;
 using Application = System.Windows.Application;
@@ -32,6 +25,7 @@ namespace ShortCuts_Manager.Dialogs
         private TextBox TextBoxPath;
 
         private RadioButton FileBTN;
+        private RadioButton FolderBTN;
         private RadioButton UrlBTN;
 
         private Button okButton;
@@ -94,6 +88,28 @@ namespace ShortCuts_Manager.Dialogs
                 }
             };
 
+            FolderBTN = new RadioButton
+            {
+                Content = "Folder",
+                Margin = new Thickness(10, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Top,
+                GroupName = "PathType",
+            };
+
+            FolderBTN.Checked += (s, e) =>
+            {
+                using (var folderBrowserDialog = new FolderBrowserDialog())
+                {
+                    var result = folderBrowserDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                    {
+                        TextBoxName.Text = System.IO.Path.GetFileName(folderBrowserDialog.SelectedPath);
+                        TextBoxPath.Text = folderBrowserDialog.SelectedPath;
+                    }
+                }
+            };
+
             UrlBTN = new RadioButton
             {
                 Content = "URL",
@@ -121,6 +137,7 @@ namespace ShortCuts_Manager.Dialogs
             panel.Children.Add(PlbaelPathType);
             panel.Children.Add(UrlBTN);
             panel.Children.Add(FileBTN);
+            panel.Children.Add(FolderBTN);
             panel.Children.Add(okButton);
 
             Content = panel;
@@ -162,6 +179,10 @@ namespace ShortCuts_Manager.Dialogs
             if (FileBTN.IsChecked == true)
             {
                 return PathType.File;
+            }
+            else if (FolderBTN.IsChecked == true) 
+            {
+                return PathType.Folder;
             }
             else
             {

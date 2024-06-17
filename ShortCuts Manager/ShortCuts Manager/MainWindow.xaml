@@ -348,6 +348,9 @@
                                                 <DataTrigger Binding="{Binding PathType}" Value="File">
                                                     <Setter Property="Source" Value="{StaticResource WinIcon}" />
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding PathType}" Value="Folder">
+                                                    <Setter Property="Source" Value="{StaticResource WinIcon}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding PathType}" Value="Url">
                                                     <Setter Property="Source" Value="{StaticResource WebIcon}" />
                                                 </DataTrigger>
