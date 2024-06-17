@@ -33,6 +33,13 @@
                 </DrawingGroup>
             </DrawingImage.Drawing>
         </DrawingImage>
+        <DrawingImage x:Key="FolderIcon">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                    <GeometryDrawing Brush="#FF000000" Geometry="M63,20v35c0,1.104-0.896,2-2,2H3c-1.104,0-2-0.896-2-2V10c0-1.104,0.896-2,2-2h21.621 c1.289,0,2.551,0.497,3.515,1.393l3.757,3.515C32.857,13.497,34.119,14,35.407,14H61c1.104,0,2,0.896,2,2V20z" />
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
         <DrawingImage x:Key="WebIcon">
             <DrawingImage.Drawing>
                 <DrawingGroup ClipGeometry="M0,0 V128 H128 V0 H0 Z">
@@ -349,7 +356,7 @@
                                                     <Setter Property="Source" Value="{StaticResource WinIcon}" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding PathType}" Value="Folder">
-                                                    <Setter Property="Source" Value="{StaticResource WinIcon}" />
+                                                    <Setter Property="Source" Value="{StaticResource FolderIcon}" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding PathType}" Value="Url">
                                                     <Setter Property="Source" Value="{StaticResource WebIcon}" />
