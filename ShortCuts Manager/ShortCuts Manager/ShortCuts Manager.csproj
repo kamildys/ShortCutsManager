@@ -12,7 +12,11 @@
 
   <ItemGroup>
     <None Remove="Resources\demant-logo.png" />
+    <None Remove="Resources\folder.png" />
+    <None Remove="Resources\group.png" />
     <None Remove="Resources\icon.ico" />
+    <None Remove="Resources\internet.png" />
+    <None Remove="Resources\windows.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,7 +27,11 @@
 
   <ItemGroup>
     <Resource Include="Resources\demant-logo.png" />
+    <Resource Include="Resources\folder.png" />
+    <Resource Include="Resources\group.png" />
     <Resource Include="Resources\icon.ico" />
+    <Resource Include="Resources\internet.png" />
+    <Resource Include="Resources\windows.png" />
   </ItemGroup>
 
 </Project>

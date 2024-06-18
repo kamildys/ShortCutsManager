@@ -8,7 +8,7 @@
         Title="ShortCuts Manager"
         Height="400"
         Width="300"
-        MinHeight="400"
+        MinHeight="450"
         MinWidth="300"
         Icon="pack://application:,,,/Resources/icon.ico"
         ResizeMode="CanResizeWithGrip"
@@ -228,6 +228,10 @@
                     >
             <TabItem Name="TabSingle" Header="Single">
                 <ListBox x:Name="SingleShortCutInformationList"
+                         MinWidth="{Binding ElementName=TabElement,
+                                            Path=ActualWidth,
+                                            Converter={StaticResource MinusParamConverter},
+                                            ConverterParameter=50}"
                          BorderThickness="0"
                          ItemsSource="{Binding SingleShortCutInformation,
                                                UpdateSourceTrigger=PropertyChanged,
@@ -247,10 +251,15 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <ListBox x:Name="GroupShortCutInformationList"
                              Grid.Row="0"
+                             MinWidth="{Binding ElementName=TabElement,
+                                                Path=ActualWidth,
+                                                Converter={StaticResource MinusParamConverter},
+                                                ConverterParameter=70}"
                              BorderThickness="0"
                              ItemsSource="{Binding GroupShortCutsInformation}"
                              SelectedItem="{Binding SelectedGroupShortCutsInformation,
@@ -265,9 +274,14 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ListBox>
-                    <Label Grid.Row="1" Content="Assigned:" />
+                    <Separator Grid.Row="1" Opacity="0.1" />
+                    <Label Grid.Row="2" Content="Assigned:" />
                     <ListBox x:Name="AssignedToGroup"
-                             Grid.Row="2"
+                             Grid.Row="3"
+                             MinWidth="{Binding ElementName=TabElement,
+                                                Path=ActualWidth,
+                                                Converter={StaticResource MinusParamConverter},
+                                                ConverterParameter=70}"
                              BorderThickness="0"
                              ItemsSource="{Binding SelectedGroupShortCutsInformation.ShortCuts,
                                                    Mode=TwoWay}"
