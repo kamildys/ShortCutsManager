@@ -18,13 +18,6 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/GlobalResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
 
     <Grid>
 
@@ -91,8 +84,7 @@
 
             <Grid Grid.Row="2">
                 <TextBox Name="Filter"
-                         Background="{Binding ElementName=AssignToGroup,
-                                              Path=Background}"
+                         Background="LightGray"
                          Margin="10,0,10,0"
                          Padding="2,2,25,2"
                          SelectionChanged="Filter_SelectionChanged"
@@ -130,7 +122,7 @@
                     >
             <Button x:Name="Add"
                     Content="+"
-                    Margin="5,10,5,0"
+                    Margin="5,9,5,0"
                     ToolTip="Add (Single/Group)"
                     >
                 <Button.Style>
@@ -148,7 +140,7 @@
             </Button>
             <Button x:Name="Delete"
                     Content="-"
-                    Margin="5,10,5,0"
+                    Margin="5,9,5,0"
                     ToolTip="Delete (Single/Group)"
                     >
                 <Button.Style>
@@ -181,7 +173,7 @@
             <Button x:Name="AssignToGroup"
                     Command="{Binding AssignToGroupCommand}"
                     Content="☍"
-                    Margin="5,10,10,0"
+                    Margin="5,9,10,0"
                     ToolTip="Assign to group"
                     Visibility="{Binding ElementName=TabSingle,
                                          Path=IsSelected,
@@ -206,7 +198,7 @@
             <Button x:Name="RemoveFromGroup"
                     Command="{Binding RemoveFromGroupCommand}"
                     Content="⤫"
-                    Margin="5,10,10,0"
+                    Margin="5,9,10,0"
                     ToolTip="Remove from group"
                     Visibility="{Binding ElementName=TabGroups,
                                          Path=IsSelected,

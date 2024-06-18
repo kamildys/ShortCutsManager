@@ -4,5 +4,11 @@
              xmlns:local="clr-namespace:ShortCuts_Manager"
              Startup="Application_Startup"
              >
-    <Application.Resources />
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/GlobalResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

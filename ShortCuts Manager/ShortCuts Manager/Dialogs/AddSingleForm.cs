@@ -48,7 +48,7 @@ namespace ShortCuts_Manager.Dialogs
             TextBoxName = new TextBox
             {
                 Margin = new Thickness(10, 0, 10, 0),
-                VerticalAlignment = VerticalAlignment.Top
+                VerticalAlignment = VerticalAlignment.Top,
             };
 
             LabelPath = new Label

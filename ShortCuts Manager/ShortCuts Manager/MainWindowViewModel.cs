@@ -42,6 +42,7 @@ namespace ShortCuts_Manager
             GroupShortCutsInformation = new ObservableCollection<GroupShortCutsInformation>(dataBase.GroupShortCutsInformation.OrderBy(x => x.Name));
 
             AppNotifyIcon.InitNotifyIcon();
+            FilterChanged();
         }
 
         #region Commands

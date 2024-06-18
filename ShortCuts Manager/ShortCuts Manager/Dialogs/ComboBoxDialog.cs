@@ -34,6 +34,7 @@ namespace ShortCuts_Manager.Dialogs
                 Margin = new Thickness(10,0,10,0),
                 ItemsSource = itemCollection,
                 DisplayMemberPath = displayMemberPath,
+                BorderThickness = new Thickness(0)
             };
 
             okButton = new Button

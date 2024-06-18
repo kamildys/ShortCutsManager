@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using DragEventHandler = System.Windows.Forms.DragEventHandler;
 using MessageBox = System.Windows.MessageBox;
+using static System.Net.WebRequestMethods;
 
 namespace ShortCuts_Manager
 {
