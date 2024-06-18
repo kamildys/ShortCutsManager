@@ -158,6 +158,7 @@
             <Setter.Value>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}" />
+                    <Setter Property="Visibility" Value="{Binding Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </Style>
             </Setter.Value>
         </Setter>
@@ -172,6 +173,13 @@
                         <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
                     </StackPanel>
                 </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Visibility" Value="{Binding Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </Style>
             </Setter.Value>
         </Setter>
     </Style>

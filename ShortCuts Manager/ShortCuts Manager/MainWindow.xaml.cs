@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using ShortCuts_Manager.Dialogs;
 using System.Windows;
+using System.Windows.Data;
 using DragEventHandler = System.Windows.Forms.DragEventHandler;
 using MessageBox = System.Windows.MessageBox;
 
@@ -46,7 +47,17 @@ namespace ShortCuts_Manager
             this.WindowState = WindowState.Minimized;
         }
 
-        private void Window_DragEnter(object sender, System.Windows.DragEventArgs e)
+	private void Filter_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(SingleShortCutInformationList.ItemsSource).Refresh();
+            CollectionViewSource.GetDefaultView(GroupShortCutInformationList.ItemsSource).Refresh();
+        }
+
+        private void ClearFilter_Click(object sender, RoutedEventArgs e)
+        {
+            Filter.Text = null;
+        }
+	private void Window_DragEnter(object sender, System.Windows.DragEventArgs e)
         {
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
             {

@@ -29,6 +29,8 @@ namespace ShortCuts_Manager
         public ObservableCollection<GroupShortCutsInformation> GroupShortCutsInformation { get; set; } = new ObservableCollection<GroupShortCutsInformation>();
         public GroupShortCutsInformation? SelectedGroupShortCutsInformation { get; set; }
 
+        public string FilterText { get; set; }
+
         public MainWindowViewModel(IUrlOpen urlOpen, IFileOpen fileOpen, IFolderOpen folderOpen, IDataBase dataBase)
         {
             this.urlOpen = urlOpen;
@@ -271,6 +273,39 @@ namespace ShortCuts_Manager
             }
         }
         #endregion RemoveFromGroup
+
+        #region FilterChanged
+        private ICommand _filterChangedCommand;
+        public ICommand FilterChangedCommand => _filterChangedCommand ??= new CommandHandler((param) => FilterChanged(), () => true);
+
+        public void FilterChanged()
+        {
+            if (string.IsNullOrEmpty(FilterText))
+            {
+                foreach (var el in SingleShortCutInformation.ToList())
+                {
+                    el.IsVisible = true;
+                }
+
+                foreach (var el in GroupShortCutsInformation.ToList())
+                {
+                    el.IsVisible = true;
+                }
+            }
+            else
+            {
+                foreach (var el in SingleShortCutInformation.ToList())
+                {
+                    el.IsVisible = el.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase);
+                }
+
+                foreach (var el in GroupShortCutsInformation.ToList())
+                {
+                    el.IsVisible = el.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
+        #endregion FilterChanged
 
         #endregion Commands
 

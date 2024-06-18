@@ -10,5 +10,6 @@ namespace ShortCuts_Manager.Models
         public PathType PathType { get; set; }
 
         public bool IsSelected { get; set; }
+        public bool IsVisible { get; set; } = true;
     }
 }
