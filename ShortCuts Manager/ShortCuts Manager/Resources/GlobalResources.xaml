@@ -127,6 +127,7 @@
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}" />
                     <Setter Property="Visibility" Value="{Binding Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 </Style>
             </Setter.Value>
         </Setter>
@@ -151,6 +152,7 @@
             <Setter.Value>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Visibility" Value="{Binding Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 </Style>
             </Setter.Value>
         </Setter>
