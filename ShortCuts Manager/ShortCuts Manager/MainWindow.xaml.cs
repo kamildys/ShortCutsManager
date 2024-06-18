@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Data;
 
 namespace ShortCuts_Manager
 {
@@ -35,6 +36,17 @@ namespace ShortCuts_Manager
         private void Minimalize_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void Filter_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(SingleShortCutInformationList.ItemsSource).Refresh();
+            CollectionViewSource.GetDefaultView(GroupShortCutInformationList.ItemsSource).Refresh();
+        }
+
+        private void ClearFilter_Click(object sender, RoutedEventArgs e)
+        {
+            Filter.Text = null;
         }
     }
 }

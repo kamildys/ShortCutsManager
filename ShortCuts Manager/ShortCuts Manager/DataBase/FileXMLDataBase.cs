@@ -15,8 +15,6 @@ namespace ShortCuts_Manager.DataBase
 
     public class FileXMLDataBase : IDataBase
     {
-        private ShortCutInformations shortCutInformations { get; set; }
-
         public FileXMLDataBase()
         {
             try
@@ -27,7 +25,7 @@ namespace ShortCuts_Manager.DataBase
                 this.SingleShortCutInformation = infos.SingleShortCutInformation;
                 this.GroupShortCutsInformation = infos.GroupShortCutsInformation;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

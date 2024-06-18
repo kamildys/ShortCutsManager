@@ -41,6 +41,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <DockPanel x:Name="TopBar"
@@ -86,6 +87,39 @@
                            FontWeight="ExtraLight"
                            />
                 </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <TextBox Name="Filter"
+                         Background="{Binding ElementName=AssignToGroup,
+                                              Path=Background}"
+                         Margin="10,0,10,0"
+                         Padding="2,2,25,2"
+                         SelectionChanged="Filter_SelectionChanged"
+                         Text="{Binding FilterText,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Text filter"
+                         >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="5" />
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+                <Button Width="25"
+                        HorizontalAlignment="Right"
+                        Click="ClearFilter_Click"
+                        Content="✕"
+                        DockPanel.Dock="Right"
+                        Margin="0,0,10,0"
+                        Style="{StaticResource TopBarButton}"
+                        />
             </Grid>
         </Grid>
 
@@ -203,7 +237,9 @@
             <TabItem Name="TabSingle" Header="Single">
                 <ListBox x:Name="SingleShortCutInformationList"
                          BorderThickness="0"
-                         ItemsSource="{Binding SingleShortCutInformation}"
+                         ItemsSource="{Binding SingleShortCutInformation,
+                                               UpdateSourceTrigger=PropertyChanged,
+                                               Mode=TwoWay}"
                          SelectionMode="Extended"
                          Style="{StaticResource SingleInfo}"
                          >
@@ -224,9 +260,7 @@
                     <ListBox x:Name="GroupShortCutInformationList"
                              Grid.Row="0"
                              BorderThickness="0"
-                             ItemsSource="{Binding GroupShortCutsInformation,
-                                                   UpdateSourceTrigger=PropertyChanged,
-                                                   Mode=TwoWay}"
+                             ItemsSource="{Binding GroupShortCutsInformation}"
                              SelectedItem="{Binding SelectedGroupShortCutsInformation,
                                                     UpdateSourceTrigger=PropertyChanged,
                                                     Mode=TwoWay}"
