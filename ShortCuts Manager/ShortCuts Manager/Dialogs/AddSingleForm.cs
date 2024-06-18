@@ -1,6 +1,7 @@
 ﻿using ShortCuts_Manager.Helpers.Enums;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Application = System.Windows.Application;
 using Button = System.Windows.Controls.Button;
 using Label = System.Windows.Controls.Label;
@@ -38,6 +39,8 @@ namespace ShortCuts_Manager.Dialogs
             SizeToContent = SizeToContent.Height;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             Owner = Application.Current.MainWindow;
+
+            this.KeyDown += new System.Windows.Input.KeyEventHandler(OnKeyDownHandler);
 
             LabelName = new Label
             {
@@ -162,6 +165,14 @@ namespace ShortCuts_Manager.Dialogs
             PathType = GetSelectedPathType();
 
             DialogResult = true;
+        }
+
+        private void OnKeyDownHandler(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                OkButton_Click(this, new RoutedEventArgs());
+            }
         }
 
         public bool ValidateInput()

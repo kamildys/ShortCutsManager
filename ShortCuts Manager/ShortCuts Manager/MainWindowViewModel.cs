@@ -213,10 +213,18 @@ namespace ShortCuts_Manager
 
         public void DeleteSingle()
         {
-            foreach (var info in SelectedSingleShortCutInformation.ToList())
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the selected item(s)?",
+                "Confirm Deletion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
             {
-                SingleShortCutInformation.Remove(info);
-                dataBase.RemoveSingle(info);
+                foreach (var info in SelectedSingleShortCutInformation.ToList())
+                {
+                    SingleShortCutInformation.Remove(info);
+                    dataBase.RemoveSingle(info);
+                }
             }
         }
         #endregion DeleteSingle
@@ -227,8 +235,16 @@ namespace ShortCuts_Manager
 
         public void DeleteGroup()
         {
-            dataBase.RemoveGroup(SelectedGroupShortCutsInformation);
-            GroupShortCutsInformation.Remove(SelectedGroupShortCutsInformation);
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the selected item(s)?",
+                "Confirm Deletion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                dataBase.RemoveGroup(SelectedGroupShortCutsInformation);
+                GroupShortCutsInformation.Remove(SelectedGroupShortCutsInformation);
+            }
         }
         #endregion DeleteGroup
 
