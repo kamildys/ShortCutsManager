@@ -176,17 +176,30 @@ namespace ShortCuts_Manager
         private ICommand _addSingleCommand;
         public ICommand AddSingleCommand => _addSingleCommand ??= new CommandHandler((param) => OpenAddWindow(), () => true);
 
-        public void OpenAddWindow(string name = null, string path = null)
+        public void OpenAddWindow(string name = null, string path = null, bool? isFolder = null, bool? isFile = null, bool? isUrl = null)
         {
             AddSingleForm addSingleForm;
 
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(path))
             {
                 addSingleForm = new AddSingleForm();
             }
             else
             {
-                addSingleForm = new AddSingleForm(name, path);
+                addSingleForm = new AddSingleForm(name, path, isFolder, isFile, isUrl);
+            }
+
+            if (isFile == true)
+            {
+                addSingleForm.FileBTN.IsChecked = true;
+            }
+            else if (isFolder == true)
+            {
+                addSingleForm.FolderBTN.IsChecked = true;
+            }
+            else if (isUrl == true)
+            {
+                addSingleForm.UrlBTN.IsChecked = true;
             }
 
             addSingleForm.ShowDialog();

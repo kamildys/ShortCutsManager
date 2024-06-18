@@ -58,11 +58,19 @@ namespace ShortCuts_Manager
         {
             Filter.Text = null;
         }
+
         private void Window_DragEnter(object sender, System.Windows.DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop) || e.Data.GetDataPresent(System.Windows.DataFormats.Text))
             {
-                e.Effects = System.Windows.DragDropEffects.Copy;
+                if (e.Effects == System.Windows.DragDropEffects.None)
+                {
+                    e.Effects = System.Windows.DragDropEffects.Copy;
+                }
+                else
+                {
+                    e.Effects = System.Windows.DragDropEffects.None;
+                }
             }
             else
             {
@@ -75,19 +83,38 @@ namespace ShortCuts_Manager
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+
                 if (files.Length > 1)
                 {
                     MessageBox.Show("Please drop only one file or folder at a time.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                if (files.Length == 1)
-                {
-                    string path = files[0];
-                    string name = Path.GetFileName(path);
+                string path = files[0];
+                string name = Path.GetFileName(path);
 
-                    (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).OpenAddWindow(name, path);
+                bool isFile = System.IO.File.Exists(path);
+                bool isFolder = Directory.Exists(path);
+
+                if (!isFile && !isFolder)
+                {
+                    Uri uriResult;
+                    bool isUrl = Uri.TryCreate(path, UriKind.Absolute, out uriResult)
+                                 && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                    if (isUrl)
+                    {
+                        (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).OpenAddWindow(name, path, false, false, true);
+                        return;
+                    }
                 }
+
+                (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).OpenAddWindow(name, path, isFolder, isFile, false);
+            }
+            else if (e.Data.GetDataPresent(System.Windows.DataFormats.Text))
+            {
+                string url = e.Data.GetData(System.Windows.DataFormats.Text) as string;
+                (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).OpenAddWindow(null, url, false, false, true);
             }
         }
     }

@@ -25,13 +25,13 @@ namespace ShortCuts_Manager.Dialogs
         private TextBox TextBoxName;
         private TextBox TextBoxPath;
 
-        private RadioButton FileBTN;
-        private RadioButton FolderBTN;
-        private RadioButton UrlBTN;
+        public RadioButton FileBTN;
+        public RadioButton FolderBTN;
+        public RadioButton UrlBTN;
 
         private Button okButton;
 
-        public AddSingleForm(string name = null, string path = null)
+        public AddSingleForm(string name = null, string path = null, bool? isFolder = null, bool? isFile = null, bool? isUrl = null)
         {
             Title = Application.Current.MainWindow.Title;
             ResizeMode = ResizeMode.NoResize;
@@ -78,6 +78,7 @@ namespace ShortCuts_Manager.Dialogs
                 Margin = new Thickness(10, 0, 10, 0),
                 VerticalAlignment = VerticalAlignment.Top,
                 GroupName = "PathType",
+                IsChecked = isFile == true,
             };
 
             FileBTN.Checked += (s, e) =>
@@ -97,6 +98,7 @@ namespace ShortCuts_Manager.Dialogs
                 Margin = new Thickness(10, 0, 10, 0),
                 VerticalAlignment = VerticalAlignment.Top,
                 GroupName = "PathType",
+                IsChecked = isFolder == true,
             };
 
             FolderBTN.Checked += (s, e) =>
@@ -119,8 +121,7 @@ namespace ShortCuts_Manager.Dialogs
                 Margin = new Thickness(10, 0, 10, 0),
                 VerticalAlignment = VerticalAlignment.Top,
                 GroupName = "PathType",
-                IsChecked = true,
-
+                IsChecked = isUrl == true,
             };
 
             okButton = new Button
