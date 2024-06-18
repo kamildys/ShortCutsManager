@@ -6,6 +6,7 @@
     <!--  Converters - BEGIN  -->
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
+    <converters:MinusParamConverter x:Key="MinusParamConverter" />
     <!--  Converters - END  -->
 
     <!--  Icons - BEGIN  -->
@@ -112,13 +113,21 @@
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
+                    <DockPanel>
                         <Image Height="24"
                                Width="24"
+                               DockPanel.Dock="Left"
                                Style="{DynamicResource IconImage}"
                                />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
-                    </StackPanel>
+                        <TextBlock Width="{Binding MinWidth,
+                                                   RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
+                                   Text="{Binding Name}"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip="{Binding Path}"
+                                   />
+                    </DockPanel>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -137,13 +146,18 @@
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Path}">
+                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Name}">
                         <Image Height="24"
                                Width="24"
                                Source="{StaticResource GroupIcon}"
                                Style="{StaticResource DisplayImage}"
                                />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+                        <TextBlock Width="{Binding MinWidth,
+                                                   RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding Name}"
+                                   TextTrimming="CharacterEllipsis"
+                                   />
                     </StackPanel>
                 </DataTemplate>
             </Setter.Value>
