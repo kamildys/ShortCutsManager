@@ -82,20 +82,5 @@ namespace ShortCuts_Manager
                 }
             }
         }
-
-        private void Window_Drop(object sender, System.Windows.DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
-            {
-                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-                if (files.Length > 0)
-                {
-                    string path = files[0];
-                    string name = Path.GetFileName(path);
-
-                    (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).OpenAddWindow(name, path);
-                }
-            }
-        }
     }
 }
