@@ -30,7 +30,7 @@ namespace ShortCuts_Manager.Dialogs
 
         private Button okButton;
 
-        public AddSingleForm()
+        public AddSingleForm(string name = null, string path = null)
         {
             Title = Application.Current.MainWindow.Title;
             ResizeMode = ResizeMode.NoResize;
@@ -129,6 +129,16 @@ namespace ShortCuts_Manager.Dialogs
             };
             okButton.Click += OkButton_Click;
 
+            if (!string.IsNullOrEmpty(name))
+            {
+                TextBoxName.Text = name;
+            }
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                TextBoxPath.Text = path;
+            }
+
             StackPanel panel = new StackPanel();
             panel.Children.Add(LabelName);
             panel.Children.Add(TextBoxName);
@@ -142,7 +152,7 @@ namespace ShortCuts_Manager.Dialogs
 
             Content = panel;
         }
-
+        
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidateInput()) return;

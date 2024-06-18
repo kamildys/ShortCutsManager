@@ -5,7 +5,6 @@ using ShortCuts_Manager.Helpers.Enums;
 using ShortCuts_Manager.Interfaces;
 using ShortCuts_Manager.Models;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Windows;
 using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
@@ -174,11 +173,20 @@ namespace ShortCuts_Manager
 
         #region AddSingle
         private ICommand _addSingleCommand;
-        public ICommand AddSingleCommand => _addSingleCommand ??= new CommandHandler((param) => AddSingle(), () => true);
+        public ICommand AddSingleCommand => _addSingleCommand ??= new CommandHandler((param) => OpenAddWindow(), () => true);
 
-        public void AddSingle()
+        public void OpenAddWindow(string name = null, string path = null)
         {
-            var addSingleForm = new AddSingleForm();
+            AddSingleForm addSingleForm;
+
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(path))
+            {
+                addSingleForm = new AddSingleForm();
+            }
+            else
+            {
+                addSingleForm = new AddSingleForm(name, path);
+            }
 
             addSingleForm.ShowDialog();
 
