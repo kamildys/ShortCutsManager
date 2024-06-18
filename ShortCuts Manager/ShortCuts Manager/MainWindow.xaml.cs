@@ -2,6 +2,7 @@
 using ShortCuts_Manager.Dialogs;
 using System.Windows;
 using DragEventHandler = System.Windows.Forms.DragEventHandler;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ShortCuts_Manager
 {
@@ -62,7 +63,13 @@ namespace ShortCuts_Manager
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-                if (files.Length > 0)
+                if (files.Length > 1)
+                {
+                    MessageBox.Show("Please drop only one file or folder at a time.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (files.Length == 1)
                 {
                     string path = files[0];
                     string name = Path.GetFileName(path);
