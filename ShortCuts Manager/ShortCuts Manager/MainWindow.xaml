@@ -8,7 +8,7 @@
         Title="ShortCuts Manager"
         Height="400"
         Width="300"
-        MinHeight="400"
+        MinHeight="450"
         MinWidth="300"
         Icon="pack://application:,,,/Resources/icon.ico"
         ResizeMode="CanResizeWithGrip"
@@ -247,6 +247,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <ListBox x:Name="GroupShortCutInformationList"
@@ -265,9 +266,10 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ListBox>
-                    <Label Grid.Row="1" Content="Assigned:" />
+                    <Separator Grid.Row="1" Opacity="0.1"/>
+                    <Label Grid.Row="2" Content="Assigned:" />
                     <ListBox x:Name="AssignedToGroup"
-                             Grid.Row="2"
+                             Grid.Row="3"
                              BorderThickness="0"
                              ItemsSource="{Binding SelectedGroupShortCutsInformation.ShortCuts,
                                                    Mode=TwoWay}"
