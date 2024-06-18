@@ -47,7 +47,7 @@ namespace ShortCuts_Manager
             this.WindowState = WindowState.Minimized;
         }
 
-	private void Filter_SelectionChanged(object sender, RoutedEventArgs e)
+        private void Filter_SelectionChanged(object sender, RoutedEventArgs e)
         {
             CollectionViewSource.GetDefaultView(SingleShortCutInformationList.ItemsSource).Refresh();
             CollectionViewSource.GetDefaultView(GroupShortCutInformationList.ItemsSource).Refresh();
@@ -57,7 +57,7 @@ namespace ShortCuts_Manager
         {
             Filter.Text = null;
         }
-	private void Window_DragEnter(object sender, System.Windows.DragEventArgs e)
+        private void Window_DragEnter(object sender, System.Windows.DragEventArgs e)
         {
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
             {
