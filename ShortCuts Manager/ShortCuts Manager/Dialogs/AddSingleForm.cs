@@ -143,6 +143,11 @@ namespace ShortCuts_Manager.Dialogs
                 TextBoxPath.Text = path;
             }
 
+            if (isUrl.HasValue && isUrl == true)
+            {
+                TextBoxName.Text = SuggestNameFromUrl(path);
+            }
+
             StackPanel panel = new StackPanel();
             panel.Children.Add(LabelName);
             panel.Children.Add(TextBoxName);
@@ -156,7 +161,19 @@ namespace ShortCuts_Manager.Dialogs
 
             Content = panel;
         }
-        
+        private string SuggestNameFromUrl(string url)
+        {
+            try
+            {
+                Uri uri = new Uri(url);
+                return uri.Host.Replace("www.", "");
+            }
+            catch
+            {
+                return "New Shortcut";
+            }
+        }
+
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidateInput()) return;
