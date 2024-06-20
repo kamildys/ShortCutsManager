@@ -37,7 +37,7 @@ namespace ShortCuts_Manager.DataBase
 
         public void AddGroup(GroupShortCutsInformation item)
         {
-            if (!GroupShortCutsInformation.Any(x => x.Name != item.Name))
+            if (!GroupShortCutsInformation.Any(x => x.Name == item.Name))
             {
                 GroupShortCutsInformation.Add(item);
             }
@@ -47,7 +47,7 @@ namespace ShortCuts_Manager.DataBase
 
         public void AddSingle(SingleShortCutInformation item)
         {
-            if (!SingleShortCutInformation.Any(x => x.Name != item.Name))
+            if (!SingleShortCutInformation.Any(x => x.Name == item.Name))
             {
                 SingleShortCutInformation.Add(item);
             }
@@ -107,7 +107,7 @@ namespace ShortCuts_Manager.DataBase
                 var infos = JsonConvert.DeserializeObject<ShortCutInformations>(json);
 
                 List<SingleShortCutInformation> singleShortCutInformation_error = 
-                    infos.SingleShortCutInformation
+                    infos.SingleShortCutInformation?
                     .Where( y => 
                         SingleShortCutInformation
                         .Select(x => x.Name)
@@ -115,14 +115,14 @@ namespace ShortCuts_Manager.DataBase
                     ).ToList();
                 
                 List<GroupShortCutsInformation> groupShortCutsInformation_error =
-                    infos.GroupShortCutsInformation
+                    infos.GroupShortCutsInformation?
                     .Where(y =>
                         GroupShortCutsInformation
                         .Select(x => x.Name)
                         .Contains(y.Name)
                     ).ToList();
 
-                if(singleShortCutInformation_error.Count > 0)
+                if(singleShortCutInformation_error?.Count > 0)
                 {
                     System.Windows.MessageBox.Show(
                         string.Join("\n", singleShortCutInformation_error.Select(x => string.Format("{0} - Name already exists", x.Name))),
@@ -131,7 +131,7 @@ namespace ShortCuts_Manager.DataBase
                         MessageBoxImage.Warning);
                 }
 
-                if (groupShortCutsInformation_error.Count > 0)
+                if (groupShortCutsInformation_error?.Count > 0)
                 {
                     System.Windows.MessageBox.Show(
                         string.Join("\n", groupShortCutsInformation_error.Select(x => string.Format("{0} - Name already exists", x.Name))),
@@ -140,15 +140,17 @@ namespace ShortCuts_Manager.DataBase
                         MessageBoxImage.Warning);
                 }
 
-                foreach (var single in infos.SingleShortCutInformation)
-                {
-                    AddSingle(single);
-                }
+                if(infos.SingleShortCutInformation != null)
+                    foreach (var single in infos.SingleShortCutInformation)
+                    {
+                        AddSingle(single);
+                    }
 
-                foreach (var group in infos.GroupShortCutsInformation)
-                {
-                    AddGroup(group);
-                }
+                if (infos.GroupShortCutsInformation != null)
+                    foreach (var group in infos.GroupShortCutsInformation)
+                    {
+                        AddGroup(group);
+                    }
             } 
             catch (Exception) 
             { }

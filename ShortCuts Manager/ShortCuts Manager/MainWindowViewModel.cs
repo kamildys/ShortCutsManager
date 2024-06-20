@@ -353,6 +353,22 @@ namespace ShortCuts_Manager
             {
                 dataBase.Import(openFileDialog.FileName);
             }
+
+            foreach(var s in dataBase.SingleShortCutInformation)
+            {
+                if(!SingleShortCutInformation.Any(x => x.Name == s.Name))
+                {
+                    SingleShortCutInformation.Add(s);
+                }
+            }
+
+            foreach (var g in dataBase.GroupShortCutsInformation)
+            {
+                if (!GroupShortCutsInformation.Any(x => x.Name == g.Name))
+                {
+                    GroupShortCutsInformation.Add(g);
+                }
+            }
         }
         #endregion Import
 
@@ -362,6 +378,8 @@ namespace ShortCuts_Manager
 
         public void ExportAll()
         {
+            if (SingleShortCutInformation?.Count == 0 && GroupShortCutsInformation?.Count == 0) return;
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "ShortCutsManager (*.ShortCutsManager)|*.ShortCutsManager";
             saveFileDialog.FilterIndex = 1;
@@ -385,6 +403,9 @@ namespace ShortCuts_Manager
 
         public void ExportSelected()
         {
+            if (MainTabSelectedIndex == 0 && SelectedSingleShortCutInformation?.Count == 0) return;
+            if (MainTabSelectedIndex == 1 && SelectedGroupShortCutsInformation == null) return;
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "ShortCutsManager (*.ShortCutsManager)|*.ShortCutsManager";
             saveFileDialog.FilterIndex = 1;

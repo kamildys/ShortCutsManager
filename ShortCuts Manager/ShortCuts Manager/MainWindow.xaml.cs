@@ -117,10 +117,5 @@ namespace ShortCuts_Manager
                 (System.Windows.Application.Current.MainWindow.DataContext as MainWindowViewModel).OpenAddWindow(null, url, false, false, true);
             }
         }
-
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            Settings.ContextMenu.IsOpen = true;
-        }
     }
 }

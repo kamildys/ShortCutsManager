@@ -67,23 +67,30 @@
                         />
                 <Button Name="Settings"
                         Width="25"
-                        Click="Settings_Click"
                         Command="{Binding ImportCommand}"
                         Content="↓"
                         DockPanel.Dock="Left"
+                        ToolTip="Import data"
                         Style="{StaticResource TopBarButton}"
                         >
-                    <Button.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Command="{Binding ImportCommand}"
-                                      DataContext="{Binding ElementName=MainWindowElement,
-                                                            Path=DataContext}"
-                                      Header="Import"
-                                      />
-                            <MenuItem DataContext="{Binding ElementName=MainWindowElement, Path=DataContext}" Header="Export (all)" />
-                            <MenuItem DataContext="{Binding ElementName=MainWindowElement, Path=DataContext}" Header="Export (selected)" />
-                        </ContextMenu>
-                    </Button.ContextMenu>
+                </Button>
+                <Button Name="Settings2"
+                        Width="25"
+                        Command="{Binding ExportallCommand}"
+                        Content="⇈"
+                        DockPanel.Dock="Left"
+                        ToolTip="Import all data"
+                        Style="{StaticResource TopBarButton}"
+                        >
+                </Button>
+                <Button Name="Settings3"
+                        Width="25"
+                        Command="{Binding ExportSelectedCommand}"
+                        Content="↑"
+                        DockPanel.Dock="Left"
+                        ToolTip="Import selected data"
+                        Style="{StaticResource TopBarButton}"
+                        >
                 </Button>
                 <Label />
             </DockPanel>

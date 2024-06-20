@@ -125,6 +125,11 @@ namespace ShortCuts_Manager.Dialogs
                 IsChecked = isUrl == true,
             };
 
+            if (isUrl == null && isFolder == null && isFile == null)
+            {
+                UrlBTN.IsChecked = true;
+            }
+
             okButton = new Button
             {
                 Content = "OK",
