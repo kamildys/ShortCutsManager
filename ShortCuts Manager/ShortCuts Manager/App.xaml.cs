@@ -12,8 +12,15 @@ namespace ShortCuts_Manager
     /// </summary>
     public partial class App : Application
     {
+        static System.Threading.Mutex singleton = new Mutex(true, "ShortCuts Manager");
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            if (!singleton.WaitOne(TimeSpan.Zero, true))
+            {
+                this.Shutdown();
+            }
+
             var services = new ServiceCollection();
 
             services.AddScoped<IFileOpen, FileOpen>();
