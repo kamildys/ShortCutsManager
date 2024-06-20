@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
+        Name="MainWindowElement"
         Title="ShortCuts Manager"
         Height="400"
         Width="300"
@@ -64,6 +65,26 @@
                         DockPanel.Dock="Right"
                         Style="{StaticResource TopBarButton}"
                         />
+                <Button Name="Settings"
+                        Width="25"
+                        Click="Settings_Click"
+                        Command="{Binding ImportCommand}"
+                        Content="↓"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource TopBarButton}"
+                        >
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding ImportCommand}"
+                                      DataContext="{Binding ElementName=MainWindowElement,
+                                                            Path=DataContext}"
+                                      Header="Import"
+                                      />
+                            <MenuItem DataContext="{Binding ElementName=MainWindowElement, Path=DataContext}" Header="Export (all)" />
+                            <MenuItem DataContext="{Binding ElementName=MainWindowElement, Path=DataContext}" Header="Export (selected)" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
                 <Label />
             </DockPanel>
 

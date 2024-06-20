@@ -2,6 +2,8 @@
 using ShortCuts_Manager.Interfaces;
 using ShortCuts_Manager.Models;
 using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace ShortCuts_Manager.DataBase
 {
@@ -35,13 +37,21 @@ namespace ShortCuts_Manager.DataBase
 
         public void AddGroup(GroupShortCutsInformation item)
         {
-            GroupShortCutsInformation.Add(item);
+            if (!GroupShortCutsInformation.Any(x => x.Name != item.Name))
+            {
+                GroupShortCutsInformation.Add(item);
+            }
+
             SaveData();
         }
 
         public void AddSingle(SingleShortCutInformation item)
         {
-            SingleShortCutInformation.Add(item);
+            if (!SingleShortCutInformation.Any(x => x.Name != item.Name))
+            {
+                SingleShortCutInformation.Add(item);
+            }
+
             SaveData();
         }
 
@@ -87,6 +97,94 @@ namespace ShortCuts_Manager.DataBase
                 Formatting.Indented);
 
             File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DB.txt"), json);
+        }
+
+        public void Import(string filename)
+        {
+            try
+            {
+                string json = File.ReadAllText(filename);
+                var infos = JsonConvert.DeserializeObject<ShortCutInformations>(json);
+
+                List<SingleShortCutInformation> singleShortCutInformation_error = 
+                    infos.SingleShortCutInformation
+                    .Where( y => 
+                        SingleShortCutInformation
+                        .Select(x => x.Name)
+                        .Contains(y.Name)
+                    ).ToList();
+                
+                List<GroupShortCutsInformation> groupShortCutsInformation_error =
+                    infos.GroupShortCutsInformation
+                    .Where(y =>
+                        GroupShortCutsInformation
+                        .Select(x => x.Name)
+                        .Contains(y.Name)
+                    ).ToList();
+
+                if(singleShortCutInformation_error.Count > 0)
+                {
+                    System.Windows.MessageBox.Show(
+                        string.Join("\n", singleShortCutInformation_error.Select(x => string.Format("{0} - Name already exists", x.Name))),
+                        "Import error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+
+                if (groupShortCutsInformation_error.Count > 0)
+                {
+                    System.Windows.MessageBox.Show(
+                        string.Join("\n", groupShortCutsInformation_error.Select(x => string.Format("{0} - Name already exists", x.Name))),
+                        "Import error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+
+                foreach (var single in infos.SingleShortCutInformation)
+                {
+                    AddSingle(single);
+                }
+
+                foreach (var group in infos.GroupShortCutsInformation)
+                {
+                    AddGroup(group);
+                }
+            } 
+            catch (Exception) 
+            { }
+        }
+
+        public void Export(
+            string filename,
+            List<SingleShortCutInformation> singleShortCutInformation = null,
+            List<GroupShortCutsInformation> groupShortCutsInformation = null)
+        {
+            //All
+            if (singleShortCutInformation == null && groupShortCutsInformation == null)
+            {
+                string json = JsonConvert.SerializeObject(
+                    new ShortCutInformations()
+                    {
+                        GroupShortCutsInformation = GroupShortCutsInformation,
+                        SingleShortCutInformation = SingleShortCutInformation
+                    },
+                    Formatting.Indented);
+
+                File.WriteAllText(filename, json);
+            }
+            //Selected
+            else
+            {
+                string json = JsonConvert.SerializeObject(
+                    new ShortCutInformations()
+                    {
+                        GroupShortCutsInformation = groupShortCutsInformation,
+                        SingleShortCutInformation = singleShortCutInformation
+                    },
+                    Formatting.Indented);
+
+                File.WriteAllText(filename, json);
+            }
         }
     }
 }

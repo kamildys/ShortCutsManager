@@ -337,6 +337,79 @@ namespace ShortCuts_Manager
         }
         #endregion FilterChanged
 
+        #region Import
+        private ICommand _importCommand;
+        public ICommand ImportCommand => _importCommand ??= new CommandHandler((param) => Import(), () => true);
+
+        public void Import()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "ShortCutsManager (*.ShortCutsManager)|*.ShortCutsManager";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.DefaultExt = "ShortCutsManager";
+            openFileDialog.ShowDialog();
+
+            if (!string.IsNullOrEmpty(openFileDialog.FileName))
+            {
+                dataBase.Import(openFileDialog.FileName);
+            }
+        }
+        #endregion Import
+
+        #region ExportAll
+        private ICommand _exportallCommand;
+        public ICommand ExportallCommand => _exportallCommand ??= new CommandHandler((param) => ExportAll(), () => true);
+
+        public void ExportAll()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "ShortCutsManager (*.ShortCutsManager)|*.ShortCutsManager";
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.DefaultExt = "ShortCutsManager";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.ShowDialog();
+
+            if (!string.IsNullOrEmpty(saveFileDialog.FileName))
+            {
+                dataBase.Export(
+                    filename: saveFileDialog.FileName,
+                    singleShortCutInformation: null,
+                    groupShortCutsInformation: null);
+            }
+        }
+        #endregion ExportAll
+
+        #region Export_Selected
+        private ICommand _exportselectedCommand;
+        public ICommand ExportSelectedCommand => _exportselectedCommand ??= new CommandHandler((param) => ExportSelected(), () => true);
+
+        public void ExportSelected()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "ShortCutsManager (*.ShortCutsManager)|*.ShortCutsManager";
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.DefaultExt = "ShortCutsManager";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.ShowDialog();
+
+            if (!string.IsNullOrEmpty(saveFileDialog.FileName))
+            {
+                List<SingleShortCutInformation> single = MainTabSelectedIndex == 0 ? SelectedSingleShortCutInformation : null;
+                List<GroupShortCutsInformation> group = MainTabSelectedIndex == 1 ? new List<GroupShortCutsInformation>() : null;
+                
+                if(group != null)
+                {
+                    group.Add(SelectedGroupShortCutsInformation);
+                }
+
+                dataBase.Export(
+                    filename: saveFileDialog.FileName,
+                    singleShortCutInformation: single,
+                    groupShortCutsInformation: group);
+            }
+        }
+        #endregion Export_Selected
+
         #endregion Commands
 
         public void OpenLinks(string[] urls, string[] paths, string[] folders)

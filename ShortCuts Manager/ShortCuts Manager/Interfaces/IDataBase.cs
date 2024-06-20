@@ -16,5 +16,10 @@ namespace ShortCuts_Manager.Interfaces
         void AddToGroup(GroupShortCutsInformation group, SingleShortCutInformation item);
 
         void RemoveFromGroup(GroupShortCutsInformation group, SingleShortCutInformation item);
+
+        void Import(string filename);
+
+        void Export(string filename, List<SingleShortCutInformation> singleShortCutInformation, List<GroupShortCutsInformation> groupShortCutsInformation);
+
     }
 }
