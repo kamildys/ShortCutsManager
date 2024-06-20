@@ -22,6 +22,7 @@ namespace ShortCuts_Manager.Dialogs
             SizeToContent = SizeToContent.Height;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             Owner = Application.Current.MainWindow;
+            Icon = Application.Current.MainWindow.Icon;
 
             label = new Label
             {
